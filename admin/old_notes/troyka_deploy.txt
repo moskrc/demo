@@ -1,0 +1,137 @@
+TROYKA install HOWTO
+
+Requirements: CentOS & cPanel, root access
+
+# wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+# wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+# rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+
+# yum install git vim python-virtualenv
+# yum install gcc libpng-devel libjpeg-devel freetype-devel
+
+# wget https://modwsgi.googlecode.com/files/mod_wsgi-3.4.tar.gz
+# tar xzvf mod_wsgi-3.4.tar.gz
+# cd mod_wsgi-3.4
+# ./configure && make && make install
+
+# mkdir -p /usr/local/apache/conf/userdata/std/2/{{USERNAME}}/troyka.com/
+# vim /usr/local/apache/conf/userdata/std/2/{{USERNAME}}/troyka.com/django.conf
+
+WSGIDaemonProcess troykacom user={{USERNAME}} group={{USERNAME}} processes=1 threads=5 display-name=%{GROUP} python-path=/home/{{USERNAME}}/django/troyka.com/env/lib/python2.6/site-packages
+WSGIProcessGroup troykacom
+WSGIApplicationGroup %{GLOBAL}
+<Directory /home/{{USERNAME}}/public_html>
+        AllowOverride FileInfo
+        #Options ExecCGI MultiViews Indexes
+        Options ExecCGI Indexes
+        MultiviewsMatch Handlers
+        Options +FollowSymLinks
+        Order allow,deny
+        Allow from all
+</Directory>
+
+# vim /usr/local/apache/conf/includes/pre_virtualhost_global.conf
+
+LoadModule wsgi_module /usr/local/apache/modules/mod_wsgi.so
+AddHandler wsgi-script .wsgi
+
+# /scripts/verify_vhost_includes
+# /scripts/rebuildhttpdconf
+# /etc/init.d/httpd stop
+# /etc/init.d/httpd start
+
+# su {{USERNAME}}
+# mkdir -p django/troyka.com
+# cd django/troyka.com
+# git clone git@git.assembla.com:troyka1.git project
+
+# virtualenv --no-site-packages env
+# source env/bin/activate
+# pip install -r project/requirements.txt
+
+# cd project/src
+# vim main/settings_local.py
+
+import os
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/home/{{USERNAME}}/django/troyka.com/project/src/sqlite3.db',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+        'OPTIONS': {
+        }
+    }
+}
+DEBUG=True
+SECRET_KEY = 'a3qa52avipkt9fdtv#_&axte-0#f0)j()i@jf!(zg8v#(!p(6a'
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/home/{{USERNAME}}/django/troyka.com/logs/django.log',
+            'maxBytes': 1024 * 1024 * 5, # 5 MB
+            'backupCount': 5,
+            'formatter': 'verbose'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+        },
+        'django.request': {
+            'handlers': ['file', 'console', 'mail_admins'],
+            'level': 'DEBUG',
+        },
+        'django.db.backends': {
+            'handlers': ['file', 'console', 'mail_admins'],
+            'level': 'ERROR',
+        },
+    }
+}
+
+# cd ~/public_html
+# vim .htaccess
+
+AddHandler wsgi-script .wsgi
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www.troyka\.com$ [NC]
+RewriteRule ^(.*)$ http://troyka.com/$1 [R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /django.wsgi/$1 [QSA,PT,L]
+
+# vim django.wsgi
+
+import os, sys
+sys.path.insert(0, '/home/{{USERNAME}}/django/troyka.com/env/lib/python2.6/site-packages')
+sys.path.insert(0, '/home/{{USERNAME}}/django/troyka.com/project/src/shared/')
+sys.path.insert(0, '/home/{{USERNAME}}/django/troyka.com/project/src/')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'main.settings'
+import django.core.handlers.wsgi
+application = django.core.handlers.wsgi.WSGIHandler()
+
+# ln -s ~/django/troyka.com/project/src/media media
+# ln -s ~/django/troyka.com/project/src/static_override static
+
+# cd /home/{{USERNAME}}/django/troyka.com/project/src
+# ln -s ~/public_html/django.wsgi django.wsgi
+# touch django.wsgi (to reload apache)

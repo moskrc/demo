@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load catalog_tags %}
+{% load favorites_tags %}
+
+{% block title %}{{ product.title }} - Каталог - {{block.super}}{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(drawSmallMap);
+
+        function drawSmallMap() {
+            var lat = $("#lat").text().replace(/,/g, '.');
+            var lng = $("#lng").text().replace(/,/g, '.');
+            var zoom_level = $("#zoom_level").text().replace(/,/g, '.');
+            if (!lat || !lng || !zoom_level) return;
+
+            var myMap = new ymaps.Map("small_map", {
+                        center: [lat, lng],
+                        zoom: zoom_level
+                    }),
+            myPlacemark = new ymaps.Placemark([lat, lng]);
+
+            // Добавляем метки на карту
+            myMap.geoObjects.add(myPlacemark);
+
+            myMap.controls
+                    .add('zoomControl')
+                    .add('typeSelector')
+                    .add('smallZoomControl', { right: 5, top: 75 })
+                    .add('mapTools');
+            myMap.controls
+                    .add(new ymaps.control.ScaleLine());
+        }
+    </script>
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    {% if not product.is_approved %}
+        <div class="row">
+            <div class="span12">
+                <div class="alert alert-error" style="margin: 5px 0px;">
+                    <a class="close" data-dismiss="alert">×</a>
+                    Ваша публикация еще не проверена и не участвует в поиске
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+
+    {% if product.is_unpaid %}
+        <div class="row">
+            <div class="span12">
+                <div class="alert alert-error" style="margin: 5px 0px;">
+                    <a class="close" data-dismiss="alert">×</a>
+                    Ваша публикация не оплачена и не участвует в поиске
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+
+        <div class="span3">
+            {% if product.deal_type.slug != 'demand' %}
+            <div>
+                {% if product.get_main_image %}
+                    <img src="{% thumbnail product.get_main_image.image 320x240 crop %}"/>
+                {% else %}
+                    <div style="width: 220px; height: 100px; background-color: #e0e0e0; padding-top: 55px; text-align: center">
+                        <i>Нет<br/> изображения</i>
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div style="text-align: center; border: 1px dashed #c0c0c0; padding-top: 10px; margin: 10px 0px">
+                <p><strong>{{ product.category }}</strong></p>
+				<p>Тип сделки: {{ product.deal_type }}</p>
+                <p>Номер ID: {{ product.id }}</p>
+				<h5><p> {{ product.created }} </p></h5>
+            </div>
+
+            {% if product.deal_type.slug != 'demand' %}
+            <div style="text-align: center; border: 1px dashed #c0c0c0">
+                <h3>{{ product.get_price }}</h3>
+            </div>
+            {% endif %}
+            <div class="well" style="margin-top: 10px">
+                <h4>Контактные данные</h4>
+
+                {% with product.user.get_profile as p %}
+
+                    {% if p.photo %}
+                        <p style="text-align: center">
+                            <img src="{% thumbnail p.photo 200x200 crop %}">
+                        </p>
+                    {% endif %}
+
+                    <p><strong>Имя: </strong>{{ p.user.first_name }}</p>
+
+                    {% if p.is_company %}
+                        <p><strong>Компания: </strong>{{ p.company_name }}</p>
+                    {% endif %}
+
+                    {% if p.skype %}
+                        <p><strong>Skype:</strong> {{ p.skype }}</p>
+                    {% endif %}
+                    {% if p.tel1 %}
+                        <p><strong>Тел:</strong> {{ p.tel1 }}</p>
+                    {% endif %}
+                    {% if p.tel2 %}
+                        <p><strong>Тел (доп):</strong> {{ p.tel2 }}</p>
+                    {% endif %}
+
+                    <a href="{% url messages_compose_to_with_subject product.user.id product.title %}" class="btn">Отправить сообщение</a>
+
+                {% endwith %}
+            </div>
+        </div>
+        <div class="span9">
+
+            <div class="pull-right">
+                <form class="add-to-fav-form" method="post" action="{% url favorites_add_remove %}">{% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                    {% if user.is_authenticated %}
+                        {% if product|infavs:user %}
+                            <button type="submit" class="btn btn-mini">Удалить из Избранного</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-mini btn-success">Добавить в Избранное</button>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url favorites_add_remove %}"  class="btn btn-mini btn-success">Добавить в Избранное</a>
+                    {% endif %}
+                </form>
+            </div>
+
+
+            <h2 style="margin-top: 0px">{{ product.title }}</h2>
+
+            <div class="span9">
+
+            </div>
+
+            {{ product.description|linebreaks }}
+
+            {% for d in data %}
+                <fieldset>
+                <legend>{{ d.name }}</legend>
+
+                {% for v in d.values %}
+                    <div class="row">
+                        <div class="span4">
+                            {{ v.name }}:
+                        </div>
+
+                        <div class="span5">
+                            {% if v.type == 'BooleanField' %}
+                                {{ v.value|yesno:"Да, Нет" }}{% if v.additional %} ({{ v.additional }}){% endif %}
+                            {% else %}
+
+                            {% if v.type == 'TextField' %}
+                                {{ v.value|linebreaks }}
+                            {% else %}
+                                {{ v.value }}
+                            {% endif %}
+                                {% if v.additional %} ({{ v.additional }}){% endif %}
+                            {% endif %}
+                        </div>
+
+                    </div>
+                {% endfor %}
+                </fieldset>
+            {% endfor %}
+
+
+            {% if product.images.all %}
+                <h3>Фотографии</h3>
+                    <ul class="thumbnails" data-toggle="modal-gallery" data-target="#modal-gallery" data-selector="a.thumbnail">
+                        {% for i in product.images.all %}
+                            <li class="span3">
+                                <div class="thumbnail" style="text-align: center" >
+                                    <a href="{{ i.image.url }}" class="thumbnail">
+                                        <img src={% thumbnail i.image 200x150 crop %}>
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+            {% endif %}
+
+            {% if product.deal_type.slug != 'demand' %}
+            {% if product.locations.all %}
+                <h3>Расположение на карте</h3>
+                <div id="small_map_block">
+                    <span id="coordinates" style="display: none;"><span id="lat">{{ product.locations.all.0.lat }}</span><span id="lng">{{ product.locations.all.0.lng }}</span><span id="zoom_level">{{ product.locations.all.0.zoom_level }}</span> </span>
+                    <div id="small_map" style="width: 700px; height: 400px; overflow: hidden;"></div>
+                </div>
+
+            {% endif %}
+            {% endif %}
+
+
+        </div>
+    </div>
+
+
+{% endblock %}

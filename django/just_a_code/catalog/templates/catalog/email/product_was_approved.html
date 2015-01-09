@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+
+<h1>Ваша публикация была проверено и допущено к показу на Salea.ru</h1>
+
+<p><strong>Отправлено:</strong> {{sended|date:"d.m.y H:i:s"}}</p>
+
+
+<h2>Публикация</h2>
+
+<h4>{{ product.title }}</h4>
+
+{{ product.description|linebreaks }}
+
+<div>
+    <p>Тип сделки: {{ product.deal_type }}</p>
+    <p>Категория: {{ product.category }}</p>
+    <p>Регион: {{ product.get_latest_location.region }}</p>
+    {% if product.deal_type.slug != 'demand' %}
+    <p>Стоимость: {{ product.get_price }}</p>
+    {% endif %}
+</div>
+
+
+<h2>Контактная информация</h2>
+<table border="1" cellpadding="5" cellspacing="0" width="600px;">
+<tr><td>Имя:</td><td>{{profile.first_name}}</td></tr>
+<tr><td>Отчество:</td><td>{{profile.middle_name}}</td></tr>
+<tr><td>Email:</td><td><a href="mailto:{{profile.email}}">{{profile.email}}</a></td></tr>
+<tr><td>Представитель компании:</td><td>{{profile.is_company|yesno:"Да,Нет"}}</td></tr>
+{% if profile.is_company %}
+<tr><td>Наименовании компании:</td><td>{{profile.company_name}}</td></tr>
+{% endif %}
+</table>
+
+
+<h3>Ссылки для просмотра и редактирования</h3>
+
+{% with domain_url=product.get_latest_location.region.get_url %}
+
+<a href="{{ domain_url }}catalog/{{ product.id }}/{{ product.slug }}/">Просмотр</a>
+{% if product.deal_type.slug != 'demand' %}
+    <a href="{{ domain_url }}catalog/{{ product.id }}/edit_item/">Редактирование</a>
+{% else %}
+    <a href="{{ domain_url }}catalog/{{ product.id }}/edit_demand/">Редактирование</a>
+{% endif %}
+
+{% endwith %}
+</body>
+</html>

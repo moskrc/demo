@@ -1,0 +1,7 @@
+<div class="well">
+    <a href="{% url dashboard_task m.task.id  %}"><strong>{{ m.task.service }}</strong></a>
+    <p>{{ m.body }}</p>
+    <div>
+        <span class="badge badge-success">{{ m.created }}</span><div class="pull-right"><span class="label">{{ m.task.user.profile.name }}</span> <span class="label">{{ m.task.user.profile.telephone }}</span> <span class="label"><a style="color: white;" href="mailto:{{ m.task.user.email }}">{{ m.task.user.email }}</a></span></div>
+    </div>
+</div>

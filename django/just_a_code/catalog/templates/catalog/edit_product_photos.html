@@ -1,0 +1,38 @@
+{% extends "accounts/base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load crispy_forms_tags %}
+
+{% block extra_meta %}
+    {{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+    <ul class="nav nav-tabs">
+        <li><a href="{% url edit_product product.id %}">Основная информация и стоимость</a></li>
+        <li><a href="{% url edit_product_map product.id %}">Расположение на карте</a></li>
+        <li class="active"><a href="{% url edit_product_photos product.id %}">Фотографии</a></li>
+    </ul>
+
+    <ul class="thumbnails">
+        {% for i in product.images.all %}
+        <li class="span3">
+            <div class="thumbnail" style="text-align: center">
+                <a href="{{ i.image.url }}">
+                    <img src={% thumbnail i.image 200x150 crop %}>
+                </a>
+                <div class="caption" style="text-align: center">
+                    <p><a class="btn btn-mini btn-primary" href="#">Сделать основным</a> <a class="btn btn-mini btn-warning" href="#">Удалить</a></p>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+
+    <a href="#" class="btn btn-success">Добавить изображение</a>
+
+
+{% endblock %}
+

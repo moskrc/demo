@@ -1,0 +1,43 @@
+{% extends "catalog/add_object_wizard/wizard_form.html" %}
+
+{% block extra_meta %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.add-file').click(function(ev){
+                ev.preventDefault();
+                var count = $('.files').children().length;
+                var tmplMarkup = $('#file-template').html();
+                var compiledTmpl = _.template(tmplMarkup, { id : count });
+                $('div.files').append(compiledTmpl);
+                // update form count
+                $('#id_files-TOTAL_FORMS').attr('value', count+1);
+            });
+        })
+    </script>
+
+    <script type="text/html" id="file-template">
+        <div id="file-<%= id %>">
+            <label for="id_files-<%= id %>-image">Изображение:</label>
+            <input id="id_files-<%= id %>-image" type="file" name="files-<%= id %>-image">
+        </div>
+    </script>
+
+{% endblock %}
+
+
+{% block form_data %}
+        {{ wizard.form.management_form }}
+
+        <div class="files">
+            {% for form in wizard.form.forms %}
+                <div id="file-{{ forloop.counter0 }}">
+                    {{ form }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <a href="#" class="btn btn-info add-file">Добавить файл</a>
+        </div>
+{% endblock %}

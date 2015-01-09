@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load catalog_tags %}
+
+{% block title %}Каталог - {{block.super}}{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    {% autopaginate products 10 %}
+
+
+
+    <div class="row">
+        <div class="span12">
+            <h1>
+                КАТАЛОГ
+                {% if category %}<small>{{ category|lower }}</small>{% endif %}
+                <small>спрос</small>
+            </h1>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="span3">
+            <ul class="nav nav-list">
+                <li class="nav-header">Спрос по разделам </li>
+                {% for c in categories %}
+                    <li><a href="#">{{ c }}</a> </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="span9">
+            {% for p in products %}
+                <div class="row product_item">
+                    <div class="span12 product_item_header">
+                        <h2>
+                            <a href="{{ p.get_absolute_url }}">{{ p.title|truncatechars:50 }}</a> <br/><small>{{ p.user.first_name }} {{ p.created|date:"d.m.Y" }}</small></h2>
+                    </div>
+
+
+                    <div class="span3">
+                        <dl class="s">
+                            <dt>Раздел:</dt>
+                            <dd>{{ p.category }}</dd>
+                            <dt>Тип сделки:</dt>
+                            <dd>{{ p.deal_type }}</dd>
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <div class="span6 product_item_description">
+                        {{ p.description|truncatechars:280 }}
+                    </div>
+
+
+                </div>
+            {% empty %}
+                <h3>Нет доступных предожений</h3>
+            {% endfor %}
+
+            {% paginate %}
+
+        </div>
+    </div>
+
+
+
+{% endblock %}

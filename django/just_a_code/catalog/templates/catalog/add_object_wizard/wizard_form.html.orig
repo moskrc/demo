@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block head %}
+    {{ wizard.form.media }}
+{% endblock %}
+
+
+{% block content %}
+    {% block wizard_step %}
+    <p>Шаг {{ wizard.steps.step1 }} из {{ wizard.steps.count }}</p>
+    {% endblock %}
+    <form action="" method="post" class="form-horizontal" enctype='multipart/form-data'>{% csrf_token %}
+        {{ wizard.management_form }}
+
+        {% block form_data %}
+            {% if wizard.form.forms %}
+                {{ wizard.form.management_form }}
+
+                {% for form in wizard.form.forms %}
+                    {% crispy form %}
+                {% endfor %}
+
+            {% else %}
+                {% crispy wizard.form wizard.form.helper %}
+            {% endif %}
+        {% endblock %}
+
+        <div class="control-group">
+            <div class="controls">
+
+                {% if wizard.steps.next %}
+                    <input type="submit" value="Далее" class="btn btn-primary"/>
+                {% else %}
+                    <input type="submit" value="Завершить добавление объявления" class="btn btn-primary"/>
+                {% endif %}
+                {% if wizard.steps.prev %}
+                    &nbsp; или &nbsp;
+                    <button class="btn" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Назад</button>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </form>
+{% endblock %}

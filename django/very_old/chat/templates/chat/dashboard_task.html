@@ -1,0 +1,107 @@
+{% extends "chat/dashboard.html" %}
+{% load common_tags %}
+
+{% block extra_meta %}
+    {{ block.super }}
+
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    {% load socketio_tags %}
+    {% socketio %}
+    <script src="{{ STATIC_URL }}js/chat.js"></script>
+    <script>
+        window.room = {{ task.id }};
+        window.uid = {{ request.user.id }};
+        window.is_staff = {% if request.user.is_staff %}1{% else %}0{% endif %};
+
+
+        $(document).ready(function(){
+            var tid = setTimeout(updateStatus, 15000);
+
+            function updateStatus() {
+                $("<div>").load('{{ ajax_updater_url }}',function(data){
+                    $('div.task_info').replaceWith($(this).find('div.task_info'));
+                })
+
+                tid = setTimeout(updateStatus, 15000); // repeat myself
+            }
+            function abortTimer() {
+                clearTimeout(tid);
+            }
+
+        });
+
+    </script>
+
+
+
+{% endblock %}
+
+{% block dashboard_breadcrumbs %}
+    <ul class="breadcrumb">
+        <li><a href="{% url dashboard %}">Главная</a> <span class="divider">/</span></li>
+        <li class="active">{{ task.service }}</li>
+    </ul>
+{% endblock %}
+
+{% block main %}
+
+    <h5 class="page-header">{{ task.service }} <small> <a href="{% url dashboard %}">(назад)</a></small></h5>
+
+    {{ task.description|linebreaks }}
+    {% if task.address %}
+        <p>Адрес доставки:</p>
+        {{ task.address|linebreaks }}
+    {% endif %}
+
+
+
+    <div class="row">
+
+        <div class="span9">
+            <h4>Переписка</h4>
+            <div id="messages">
+                {% for m in task.message_set.all %}
+                    <div class="message">
+                        <span>{{ m.user.profile.name }}</span> <span class="pull-right">{{ m.created }}</span>
+                        <p>{{ m.body|linebreaks }}</p>
+                    </div>
+                {% endfor %}
+
+                {% verbatim %}
+                <script type="text/x-jquery-tmpl">
+                    <div class="message">
+                        <span>${name}</span> <span class="pull-right">${time}</span>
+                        <p>{{html message}}</p>
+                    </div>
+                </script>
+                {% endverbatim %}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span9">
+                <form accept-charset="UTF-8" action="" method="POST" class="well send_msg_form">
+                    <textarea class="span7" id="new_message" name="new_message"
+                              placeholder="Введите сообщение" rows="5" style="width: 98%;"></textarea>
+                    <h6 class="pull-right"></h6>
+                    <button class="btn btn-info" type="submit">Отправить</button> <span class="muted">Отправка по Shift+Enter</span>
+                </form>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'chat/elements/task_info.html' with task=task %}
+
+    <form action="." method="POST">{% csrf_token %}
+        <input type="hidden" value="1" name="aaa">
+        <input type="submit" value="Отправить историю чата" name="send_history">
+    </form>
+
+{% endblock %}
+
+

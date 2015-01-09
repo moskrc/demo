@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block extra_meta %}
+    {{ block.super }}
+    <script type="text/javascript" charset="utf-8">
+
+    </script>
+{% endblock %}
+
+
+ {% block header %}
+    <h1>Публикация успешно добавлена</h1>
+{% endblock %}
+
+{% block content %}
+    {% if not product.is_demand %}
+        <p>Стоимость показа публикации на Salea <strong>{{ sc.price_per_day }} рублей в сутки</strong>.</p>
+    {% endif %}
+
+    <p>После проверки объявления модератором вы получите письмо с подтверждением показа.</p>
+
+    {% if not product.is_demand %}
+        <p>Для того чтобы оплатить показ этой публикации, воспользуейтесь формой ниже или кликните по кнопке "Оплатить".</p>
+    {% else %}
+        <p>Выберите срок показа публикации на форме ниже. Размещение в категории "Спрос" бесплатно.</p>
+    {% endif %}
+
+    <hr/>
+    <h5>Заголовок публикации: </h5>
+    <h3>{{ product.title }} [ID: {{ product.id }}]</h3>
+
+    <form action="." class="form" method="POST">{% csrf_token %}
+        {% include 'common/elements/form.html' %}
+        {% if not product.is_demand %}
+            {% include 'common/elements/form_submit.html' with text='Перейти к оплате' %}
+        {% else %}
+            {% include 'common/elements/form_submit.html' with text='Опубликовать' %}
+        {% endif %}
+    </form>
+{% endblock %}

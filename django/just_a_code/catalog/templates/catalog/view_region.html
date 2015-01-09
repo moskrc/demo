@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load catalog_tags %}
+
+{% block title %}Каталог - {{block.super}}{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <h1>
+                КАТАЛОГ
+                {% if category %}<small>{{ category|lower }}</small>{% endif %}
+                {% if deal_type %}<small>{{ deal_type|lower }}</small>{% endif %}
+            </h1>
+        </div>
+    </div>
+
+
+    {% if products %}
+        {% if deal_type.slug != 'demand' %}
+        <div class="row">
+            <div class="span12">
+
+                <form class="form form-inline well well-small" style="height: 50px">
+                    <div class="span6" style="margin-top: 10px">
+                        <label>Цена от: </label>
+                        <input class="input-small" size="12" type="text" name="price_from" id="DoubleTrack-5-InputMin" value="{{ price_from|default:'' }}" />
+                        <label>до, </label>
+                        <input class="input-small" size="12" type="text" name="price_to" id="DoubleTrack-5-InputMax" value="{{ price_to|default:'' }}" />
+                        <label>руб.</label>
+                        <input type="submit" class="btn">
+                    </div>
+
+                    <div class="span4">
+                        <div id="DoubleTrack-5" class="DoubleTrackBar" style="visibility: hidden;">
+                            <div id="DoubleTrack-5-Tracker" class="Tracker">
+                                <img src="/static/img/gui.png" alt='' class="fll" />
+                                <img src="/static/img/gui.png" alt='' class="flr" />
+                                <span class="fll text" id="DoubleTrack-5-LeftText"></span>
+                                <span class="flr text" id="DoubleTrack-5-RightText"></span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="clear"></div>
+                <script type="text/javascript" defer="defer">
+                    $(document).ready(function(){
+
+                    function classFilter(r,m,not){
+                        m = " " + m + " ";
+                        var tmp = [];
+                        for ( var i = 0; r[i]; i++ ) {
+                            var pass = (" " + r[i].className + " ").indexOf( m ) >= 0;
+                            if ( not ^ pass )
+                                tmp.push( r[i] );
+                        }
+                        return tmp;
+                    }
+
+                    var DoubleTrackBar = new cDoubleTrackBar('DoubleTrack-5', 'DoubleTrack-5-Tracker', {
+                        OnUpdate: function(){
+                            $('#DoubleTrack-5-LeftText').html(this.leadSpaces(this.MinPos)+" руб.");
+                            $('#DoubleTrack-5-RightText').html(this.leadSpaces(this.MaxPos)+" руб.");
+                            $('#DoubleTrack-5-InputMin').val(this.MinPos);
+                            $('#DoubleTrack-5-InputMax').val(this.MaxPos);
+
+                            this.Tracker.style.backgroundPosition = -this.TrackerLeft + 'px center';
+                            if (this.fix)
+                                for (var i in this.fix)
+                                    this.fix[i].style.left = (this.TrackerRight - this.TrackerLeft) + 'px';
+
+                            var distance = Math.ceil(($('#DoubleTrack-5-RightText').offset().left - parseInt($('#DoubleTrack-5-RightText').css('margin-left')) + parseInt($('#DoubleTrack-5-LeftText').css('margin-left')) - $('#DoubleTrack-5-LeftText').offset().left - $('#DoubleTrack-5-LeftText').width() - 40)/2);
+                            if(distance <= 0)
+                            {
+                                var left_margin = (distance);
+                                var right_margin = (-distance) - 50;
+                                console.log($('#DoubleTrack-5-RightText').offset().left + ' - ' + $('#DoubleTrack-5-LeftText').offset().left + ' - ' + $('#DoubleTrack-5-LeftText').width());
+                                console.log(distance);
+                                $('#DoubleTrack-5-LeftText').css('margin-left', left_margin + 'px');
+                                $('#DoubleTrack-5-RightText').css('margin-left', right_margin + 'px');
+                            }
+                            else
+                            {
+                                $('#DoubleTrack-5-LeftText').css('margin-left', 0);
+                                $('#DoubleTrack-5-RightText').css('margin-left', '-50px');
+                            }
+                        },
+                        Min: {{ min_max_price.min }},
+                        Max: {{ min_max_price.max }},
+                        FingerOffset: 0,
+                        MinSpace: 14400,
+                        RoundTo: 100,
+                        Margins: 0,
+                        FormatNumbers: true,
+                        AllowedValues: true
+                    });
+                    DoubleTrackBar.AutoHairline(4);
+                    DoubleTrackBar.fix = classFilter(DoubleTrackBar.Tracker.getElementsByTagName('*'), 'flr');
+                    DoubleTrackBar.Track.style.visibility = 'visible';
+                        {% if price_from and price_to %}
+                    DoubleTrackBar.SetLeftValue({{ price_from }});
+                    DoubleTrackBar.SetRightValue({{ price_to }});
+                            {% endif %}
+
+
+                        $('#DoubleTrack-5-InputMin').blur(function()
+                        {
+                            if($(this).val() == parseInt($(this).val()))
+                            {
+                                DoubleTrackBar.SetLeftValue(parseInt($(this).val()));
+                            }
+                        })
+
+                        $('#DoubleTrack-5-InputMax').blur(function()
+                        {
+                            if($(this).val() == parseInt($(this).val()))
+                            {
+                                DoubleTrackBar.SetRightValue(parseInt($(this).val()));
+                            }
+                        })
+
+
+                    })
+                </script>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="row">
+        <div class="span9">
+            {% for p in products %}
+                {% if p.deal_type.slug != 'demand' %}
+                    {% include 'catalog/elements/item.html' %}
+                {% else %}
+                    {% include 'catalog/elements/item_demand.html' %}
+                {% endif %}
+            {% empty %}
+                <h3>Нет публикаций подходящих под выбранные критерии</h3>
+            {% endfor %}
+
+        </div>
+        <div class="span3">
+            <ul class="nav nav-list">
+                <li class="nav-header">По типу сделки</li>
+                {% for dt in deal_types %}
+                    <li {% if deal_type == dt %}class="active"{% endif %}><a href="{% url view_region_by_deal_type city dt.slug %}">{{ dt }}</a> </li>
+                {% endfor %}
+
+
+                <li class="nav-header">Предложения по разделам</li>
+                {% for c in deal_type.category_set.all %}
+                    <li {% if category == c %}class="active" {% endif %}><a href="{% url view_region_by_object_type_and_deal_type city deal_type.slug c.slug %}">{{ c }}</a> </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

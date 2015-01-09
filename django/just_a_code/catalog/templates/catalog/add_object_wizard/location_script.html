@@ -1,0 +1,137 @@
+<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+
+<script type="text/javascript" charset="utf-8">
+
+    $(function(){
+
+        // Метро
+
+        {% if not request.location.metro %}
+            $(".metro-alt, .metro").parent().hide();
+        {% endif %}
+
+        // Можно добавить еще одно метро
+        $("a.add_metro").on('click',function(){
+            $(".metro-alt").parent().toggle();
+            return false;
+        });
+
+        // Рисуем карту
+        ymaps.ready(init);
+
+        {% with request.location.lat|stringformat:"f" as lat %}
+            {% with request.location.lng|stringformat:"f" as lng %}
+
+
+
+                console.log($("#id_{{prefix}}zoom_level").val())
+                if ($("#id_{{prefix}}lat").val() == '' || $("#id_{{prefix}}lng").val()=='') {
+                    var lat = {{ lat }};
+                    var lng = {{ lng }};
+                } else
+                {
+                    var lat = $("#id_{{prefix}}lat").val();
+                    var lng = $("#id_{{prefix}}lng").val();
+                }
+                console.log(lat, lng)
+                var zoom_level = $("#id_{{prefix}}zoom_level").val();
+
+                var myMap;
+                var myPlacemark;
+
+                function updateCoordinates() {
+                    var lat = myPlacemark.geometry.getCoordinates()[0];
+                    var lng = myPlacemark.geometry.getCoordinates()[1];
+                    $("#id_{{prefix}}lat").val(lat);
+                    $("#id_{{prefix}}lng").val(lng);
+                }
+
+                function init () {
+                    myMap = new ymaps.Map("map", {
+                        center: [lat, lng],
+                        zoom: zoom_level
+                    });
+
+                    myMap.controls
+                        // Список типов карты
+                            .add('typeSelector')
+                            .add('smallZoomControl', { right: 5, top: 75 })
+
+                    // Первый способ задания метки
+                    myPlacemark = new ymaps.Placemark([lat, lng],{},{draggable: true})
+
+
+                    // Добавляем метки на карту
+                    myMap.geoObjects.add(myPlacemark)
+
+
+                    $('#geolocation').on('click',function(){
+
+                        var selected_region_id = $("#id_{{prefix}}region option:selected").val();
+                        $.getJSON("/regions/get_location_info/"+selected_region_id+"/",{}, function(response){
+
+                            var adr = response['region_name'] + ',' + $("#id_{{prefix}}city").val() + ',' + $("#id_{{prefix}}address").val();
+                            console.log(adr);
+                            ymaps.geocode(adr, { results: 1 }).then(function (res) {
+                                // Выбираем первый результат геокодирования
+                                var firstGeoObject = res.geoObjects.get(0);
+                                if (firstGeoObject) {
+                                    myPlacemark.geometry.setCoordinates(firstGeoObject.geometry.getCoordinates())
+                                    myMap.setCenter(myPlacemark.geometry.getCoordinates())
+                                    updateCoordinates();
+                                }
+                            });
+                        });
+
+                        return false;
+                    });
+
+                    myPlacemark.events.add('drag', function () {
+                        updateCoordinates();
+                    });
+
+                    myMap.events.add(['move','boundschange'], function(e) {
+                        $("#id_{{prefix}}zoom_level").val(e.getMap().getZoom());
+                    });
+
+
+
+                    $("#id_{{prefix}}region").on('change', function(){
+                        $.getJSON("/regions/get_location_info/"+$(this).val()+"/",{}, function(response){
+                            var lat = response['lat'];
+                            var lng = response['lng'];
+                            var zoom = response['zoom'];
+                            var metro = response['metro'];
+
+                            myPlacemark.geometry.setCoordinates([lat,lng])
+                            myMap.setCenter(myPlacemark.geometry.getCoordinates())
+                            myMap.setZoom(zoom);
+
+                            if (metro) {
+                                $(".metro").parent().show();
+                                $("#id_{{prefix}}metro_available").val(1);
+                            } else {
+                                $(".metro").parent().hide();
+                                $(".metro-alt").parent().hide();
+                                $("#id_{{prefix}}metro_available").val(0);
+                            }
+
+                        });
+                    });
+
+                {% if edit_mode %}
+
+                {% else %}
+                    $("#id_{{prefix}}region").change()
+                {% endif %}
+
+
+
+
+                }
+
+            {% endwith %}
+        {% endwith %}
+
+    })
+</script>

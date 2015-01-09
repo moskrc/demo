@@ -1,0 +1,116 @@
+{% extends "accounts/base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+    {% autopaginate products 10 %}
+
+    <p class="pull-right">
+        <a href="{% url add_object %}" class="btn" style="margin-right: 5px">Добавить публикацию</a>
+    </p>
+
+    <div class="clearfix"></div>
+
+    <br/>
+
+
+    <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>
+            Фото
+        </th>
+        <th>
+            Информация
+        </th>
+        <th style="text-align: center">
+            Действия
+        </th>
+    </tr>
+    </thead>
+    {% for i in products %}
+        <tr>
+            <td style="width: 130px">
+                {% if i.get_main_image %}
+                    <img src="{% thumbnail i.get_main_image.image 130x100 crop %}"/>
+                {% else %}
+                    {% if i.deal_type.slug == 'demand' %}
+                    <div style="width: 130px; height: 65px; background-color: #c0c0c0; padding-top: 35px; text-align: center">
+                        <i>Спрос</i>
+                    </div>
+
+                    {% else %}
+                    <div style="width: 130px; height: 75px; background-color: #c0c0c0; padding-top: 25px; text-align: center">
+                        <i>Нет<br/> изображения</i>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td>
+                <h5 style="margin-top: 0; font-size: 15px"><a href="{{ i.get_absolute_url }}">{{ i.title|truncatechars:50 }}</a></h5>
+
+                {% if i.deal_type.slug == 'demand' %}
+                    <p>
+                    {{ i.description|truncatechars:50 }}
+                        </p>
+                {% else %}
+                <h4 style="margin: 15px 0px">{{ i.get_price }}</h4>
+                {% endif %}
+
+                {% if i.is_approved %}
+                    <span class="label label-success">Проверено</span>
+                {% else %}
+                    <span class="label label-warning">На модерации</span>
+                {% endif %}
+
+                |
+
+                {% if i.is_unpaid %}
+                    {% if i.is_demand %}
+                        <span class="label label-important">Не продлено</span>
+                    {% else %}
+                        <span class="label label-important">Не оплачено</span>
+                    {% endif %}
+                {% else %}
+                    {% if i.is_demand %}
+                        <span class="label" style="color: #000000">Показывать до: {{ i.paid_until|date:"d.m.Y" }}. Осталось дней: {{ i.days_remains }}</span>
+                    {% else %}
+                        <span class="label" style="color: #000000">Оплачено до: {{ i.paid_until|date:"d.m.Y" }}. Осталось дней: {{ i.days_remains }}</span>
+                    {% endif %}
+                {% endif %}
+
+
+                <br/>
+                <span class="muted" style="font-size: 11px">{{ i.get_latest_location.region }} - {{ i.deal_type }} / {{ i.category }} - {{ i.created|date:"d.m.Y" }}</span>
+            </td>
+            <td style="text-align: center; width: 100px; padding-left: 15px; padding-top: 18px">
+                {% if i.deal_type.slug == 'demand' %}
+                <a href="{% url edit_demand i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-success">Редактировать</a>
+                {% else %}
+                <a href="{% url edit_product i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-success">Редактировать</a>
+                {% endif %}
+                {% if i.is_demand %}
+                    <a href="{% url payments_pay_product i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-info">Продлить</a>
+                {% else %}
+                    <a href="{% url payments_pay_product i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-info">Оплатить</a>
+                {% endif %}
+                <a href="{% url delete_product i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-warning">Удалить</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+        <td colspan="3" style="text-align: center">
+            <h5>Нет публикаций</h5>
+        </td>
+        </tr>
+    {% endfor %}
+
+
+    </table>
+
+    {% paginate %}
+{% endblock %}

@@ -1,0 +1,62 @@
+<!--<a class="btn btn-default" ui-sref="profile">Back</a>-->
+
+<br/>
+
+<div>
+    <h2>Profile / Basic Info</h2>
+
+    <div>
+        <div ng-controller="UploadController">
+            <div ng-if="user">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Your Stats
+                </div>
+                <div class="panel-body">
+                    <strong style="color: #0000a3">Gumballs: {{ settings.data.gumballs }}</strong><br/>
+                    <strong style="color: #008000">Wins: {{ settings.stat.wins.length }}</strong><br/>
+                    <strong style="color: #CD5C5C">Losses: {{ settings.stat.losses.length }}</strong>
+                    <hr/>
+                    <strong>Rank by Wins: {{ settings.rank_by_wins_pre_calculated }}</strong><br/>
+                    <strong>Rank by Gumballs: {{ settings.rank_by_gumballs_pre_calculated }}</strong>
+                    <br/><br/><a ui-sref="my_matches_list">My Matches</a>
+                    <br/><br/><a class="btn btn-success" ui-sref="leaderboard">Leader Board</a>
+                </div>
+            </div>
+
+            <alert ng-repeat="alert in alerts" type="{{ alert.type }}"
+                   close="closeAlert($index)">{{ alert.msg }}</alert>
+            <form name="ProfileForm" class="form" role="form" ng-submit="submit(user)">
+                <div class="form-group">
+                    <label for="nickname">Username</label>
+                    <input ng-model="user.username" type="text" class="form-control" id="nickname"
+                           placeholder="Your Nick Name" required>
+                </div>
+                <!--
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input ng-model="user.email" type="email" class="form-control" id="email" placeholder="Enter email">
+                </div>
+                -->
+
+                <avatar_selector></avatar_selector>
+
+                <button type="submit" class="btn btn-primary" ng-disabled="ProfileForm.$invalid">Submit</button>
+                <!--
+                <a ui-sref="social_networks"  class="btn btn-success">Social Networks</a>
+                -->
+
+            </form>
+
+
+            <br/><br/>
+
+            <!--<a ui-sref="profile_password">Change Password</a> <br/>-->
+
+
+        </div>
+
+        </div>
+    </div>
+</div>

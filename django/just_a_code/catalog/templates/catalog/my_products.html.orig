@@ -1,0 +1,72 @@
+{% extends "accounts/base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+    {% autopaginate products 10 %}
+
+    <p class="pull-right">
+        <a href="{% url add_object %}" class="btn" style="margin-right: 5px">Добавить объявление</a>
+    </p>
+
+    <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>
+            Фото
+        </th>
+        <th>
+            Информация
+        </th>
+        <th style="text-align: center">
+            Действия
+        </th>
+    </tr>
+    </thead>
+    {% for i in products %}
+        <tr>
+            <td style="width: 130px">
+                {% if i.get_main_image %}
+                    <img src="{% thumbnail i.get_main_image.image 130x100 crop %}"/>
+                {% else %}
+                    <div style="width: 130px; height: 75px; background-color: #c0c0c0; padding-top: 25px; text-align: center">
+                        <i>Нет<br/> изображения</i>
+                    </div>
+                {% endif %}
+            </td>
+            <td>
+                <h5 style="margin-top: 0px;">{{ i.title|truncatechars:50 }}</h5>
+
+                {% if i.deal_type.slug == 'demand' %}
+                    <p>
+                    {{ i.description|truncatechars:50 }}
+                        </p>
+                {% else %}
+                <h4 style="margin: 15px 0px">{{ i.get_price }}</h4>
+                {% endif %}
+
+                <span class="label label-success">{{ i.is_approved|yesno:"В работе, На модерации" }}</span> | <span class="label label-info">{{ i.deal_type }} / {{ i.category }}</span> | <span class="label">{{ i.created }}</span> <br/>
+            </td>
+            <td style="text-align: center; width: 100px; padding-left: 15px; padding-top: 18px">
+                <a href="{% url edit_product i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-success">Редактировать</a>
+                <a href="{% url view_product i.id i.slug %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-info">Предпросмотр</a>
+                <a href="{% url delete_product i.id %}" style="width: 80px; display: block; margin-bottom: 5px" class="btn btn-mini btn-warning">Удалить</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+        <td colspan="3" style="text-align: center">
+            <h5>Нет объявлений</h5>
+        </td>
+        </tr>
+    {% endfor %}
+
+
+    </table>
+
+    {% paginate %}
+{% endblock %}

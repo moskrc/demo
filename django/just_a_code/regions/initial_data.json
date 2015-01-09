@@ -1,0 +1,44 @@
+[
+    {
+        "pk": 1,
+        "model": "regions.geolocation",
+        "fields": {
+            "name": "\u041a\u0443\u0440\u0441\u043a",
+            "metro": false,
+            "biggest_city": "\u041a\u0443\u0440\u0441\u043a",
+            "region": 94,
+            "zoom": 13,
+            "is_default": false,
+            "lat": 51.7172,
+            "lng": 36.181714
+        }
+    },
+    {
+        "pk": 2,
+        "model": "regions.geolocation",
+        "fields": {
+            "name": "\u0412\u043e\u0440\u043e\u043d\u0435\u0436",
+            "metro": false,
+            "biggest_city": "\u0412\u043e\u0440\u043e\u043d\u0435\u0436",
+            "region": 65,
+            "zoom": 13,
+            "is_default": false,
+            "lat": 51.662496,
+            "lng": 39.204096
+        }
+    },
+    {
+        "pk": 3,
+        "model": "regions.geolocation",
+        "fields": {
+            "name": "\u041c\u043e\u0441\u043a\u0432\u0430",
+            "metro": false,
+            "biggest_city": "\u041c\u043e\u0441\u043a\u0432\u0430",
+            "region": 105,
+            "zoom": 13,
+            "is_default": true,
+            "lat": 55.755773,
+            "lng": 37.617761
+        }
+    }
+]

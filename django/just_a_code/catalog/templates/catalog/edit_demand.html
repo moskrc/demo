@@ -1,0 +1,31 @@
+{% extends "accounts/base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load crispy_forms_tags %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block header %}
+    <h1>Редактирование публикации</h1>
+{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+        <a href="/accounts/">Личный кабинет</a> <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="/catalog/my_items/">Мои публикации</a> <span class="divider">/</span>
+    </li>
+    <li class="active">{{ product.title }}</li>
+</ul>
+{% endblock %}
+
+{% block account_content %}
+    <form action="." method="POST" class="form-horizontal">{% csrf_token %}
+        {% crispy form form.helper %}
+        {% include 'common/elements/form_submit.html' with value='Сохранить' %}
+    </form>
+{% endblock %}

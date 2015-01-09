@@ -1,0 +1,61 @@
+extends base
+-load thumbnail staticfiles
+
+block page_header
+    Структура БД
+
+block content
+    .b-layout
+        .b-enter.l-grid
+            .l-grid__item.one-quarter
+                include profiles/elements/_admin_part.jade
+
+            .l-grid__item.three-quarters
+                .b-form
+                    if messages
+                        for m in messages
+                              div.message
+                                    strong {{ m }}
+                    .b-activities
+                        table.b-activities_table
+                            tr.b-activities_table_tr
+                                th.b-activities_table_th Активность
+                                th.b-activities_table_th Действие
+
+
+                            if activities
+                                -for a in activities
+                                    tr.b-activities_table_tr
+                                        td.b-activities_table_td {{ a.name }}
+                                        td.b-activities_table_td
+                                            form.b-activities_table_delete_form(method="POST", action="{% url 'activities:delete' a.pk %}"){% csrf_token %}
+                                                input.b-btn.b-btn_size-s.b-btn__delete(type="submit", value="Удалить", name="delete")
+                            else
+                                tr.b-activities_table_tr
+                                    td.b-activities_table_td__empty(colspan="2") Список активностей пуст
+
+
+
+
+                        .b-form
+                            form.b-activities_form(data-parsley-validate, method="post", action="{% url 'activities:index' %}"){% csrf_token %}
+                                h3.b-form__title Добавить новую активность
+
+                                .b-form__row
+                                    .l-grid
+                                        .l-grid__item.one-third
+                                            label.b-form__label Наименование
+                                        .l-grid__item.two-thirds
+                                            .b-form__widget
+                                                input.b-field(type="text", name="name", data-parsley-trigger="blur", value="{{ form.name.value|default_if_none:'' }}")
+                                                {% include 'party/_form_errors.jade' with errors=form.name.errors %}
+
+                                .b-form__row.b-form__row-submit
+                                    .l-grid.pushfive-tenths
+                                        .l-grid__item.one-third.pushone-third
+                                            .b-form__submit
+                                                input.b-btn.b-btn_size-s(type="submit", value="Добавить", name="save")
+
+
+
+    script(src!='{% static 'js/activities.js' %}')

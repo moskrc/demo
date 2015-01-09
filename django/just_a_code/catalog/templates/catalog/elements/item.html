@@ -1,0 +1,54 @@
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load catalog_tags %}
+
+<div class="row product_item">
+    <div class="span9 product_item_header">
+        <h3><a href="{{ p.get_absolute_url }}">{{ p.title|truncatechars:50 }}</a> <br/><!--<small>{{ p.get_latest_location.region }}</small>--></h3>
+    </div>
+
+    {% if p.get_main_image and p.get_main_image.image.file %}
+    <div class="span9 thumbnail">
+
+            <img src="{% thumbnail p.get_main_image.image 700x500 crop %}"/>
+    </div>
+    {% endif %}
+
+    <div class="span3 product_item_short_info">
+        <p style="font-style: italic">Краткая характеристика:</p>
+        <dl class="s">
+            <dt>Раздел:</dt>
+            <dd>{{ p.category }}</dd>
+            <dt>Тип сделки:</dt>
+            <dd>{{ p.deal_type }}</dd>
+            <dt>Площадь:</dt>
+            <dd>
+                {% if p.category.slug == 'kvartiryi' or p.category.slug == 'appartamentyi' or p.category.slug == 'kottedzhi' or p.category.slug == 'villyi-i-osobnyaki' %}
+                    {{ p|field:"obschaya-realizuemaya-ploschad"|default:'-' }}/{{ p|field:"poleznaya-ploschad"|default:'-' }}/{{ p|field:"metrazh-kuhni"|default:'-' }}
+                {% else %}
+                    {{ p|field:"obschaya-realizuemaya-ploschad"|default:'-' }}
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+
+    <div class="span6 product_item_description">
+        <p style="font-style: italic">Описание:</p>
+        {{ p.description|truncatechars:280 }}
+    </div>
+
+
+    <div class="span3 product_item_price">
+        <p style="font-style: italic">Стоимость:</p>
+        <p style="font-size: 20px">{{ p.get_price }}</p>
+        <a href="{{ p.get_absolute_url }}" class="btn">Подробнее</a>
+    </div>
+
+    <div class="span12 muted">
+            Фотографий: {{ p.photos_count }}, Панорам: {{ p.panoramas_count }}, Видео: {{ p.videos_count }}
+        </p>
+
+    </div>
+
+
+</div>

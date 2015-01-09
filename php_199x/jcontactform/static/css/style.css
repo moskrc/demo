@@ -1,0 +1,71 @@
+body {
+	font-family: Arial, Tahoma, sans-serif;
+	background:url("/jcontactform/static/images/bg.jpg") repeat scroll 0 0 transparent;
+}
+#contact-wrapper {
+	width:430px;
+	border:1px solid #e2e2e2;
+	background:#f7f7f7;
+	padding:20px;
+	margin: 0px 20px 20px 20px;
+}
+#contact-wrapper div {
+	clear:both;
+	margin:1em 0;
+}
+#contact-wrapper label {
+	display:block;
+	float:none;
+	font-size:16px;
+	width:auto;
+}
+form#contactform input {
+	border-color:#B7B7B7 #E8E8E8 #E8E8E8 #B7B7B7;
+	border-style:solid;
+	border-width:1px;
+	padding:5px;
+	font-size:16px;
+	color:#333;
+	width: 410px;
+}
+form#contactform textarea {
+	font-family:Arial, Tahoma, Helvetica, sans-serif;
+	font-size:100%;
+	padding:0.6em 0.5em 0.7em;
+	border-color:#B7B7B7 #E8E8E8 #E8E8E8 #B7B7B7;
+	border-style:solid;
+	border-width:1px;
+	width: 410px;
+}
+
+form#contactform #submit_button {
+	width: 126px;
+	height: 33px;
+	background-image: url(/jcontactform/static/images/button.gif);
+	border-style:none;
+	font-size:14px;
+	margin-right: 10px;
+	text-indent: -1000px;
+	cursor: pointer;
+}
+
+#submit_block {
+	text-align: right;
+}
+
+#redirect_message {
+	color: green;
+}
+
+#title {
+	margin-top: 20px;
+	margin-left: 20px;
+}
+
+.error {
+	color: red;
+}
+
+#successfull_message {
+	color: green;
+}

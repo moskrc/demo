@@ -1,0 +1,23 @@
+{% extends "accounts/base.html" %}
+
+{% block extra_meta %}{% endblock %}
+
+{% block header %}<h1>Пополнить счет</h1>{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url payments_index %}">Платежи</a> <span class="divider">/</span>
+        </li>
+        <li class="active">Пополнить счет</li>
+    </ul>
+{% endblock %}
+
+
+{% block account_content %}
+ <form class="form form-inline" action="." method="POST">{% csrf_token %}
+    {% include 'common/elements/form.html' %}
+    {% include 'common/elements/form_submit.html' with text='Пополнить' %}
+</form>
+
+{% endblock %}

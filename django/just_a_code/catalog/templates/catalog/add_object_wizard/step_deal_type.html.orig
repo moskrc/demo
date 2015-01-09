@@ -1,0 +1,72 @@
+{% extends "catalog/add_object_wizard/wizard_form.html" %}
+
+{% block extra_meta %}
+    {{ block.super }}
+    <script type="text/javascript" charset="utf-8">
+
+        var SELL = 1;
+        var RENT = 2;
+
+        var DIFFERENT_PRICE_TYPES_FOR = [4];
+
+        $(function(){
+
+            // Изменился тип сделки
+            $("select#id_deal_type-deal_type").change(function(){
+
+                var commission_rows = $('#id_deal_type-commission').parent().parent().parent().parent();
+                var pledge_rows = $('#id_deal_type-pledge').parent().parent().parent().parent();
+                var period_rows = $('label[for=id_deal_type-price_period]')
+                var price_rows = $('#id_deal_type-price').parent().parent().parent().parent();
+
+                var val = this.value;
+
+                if (val) {
+                    $.getJSON('/catalog/get_deal_type_info/'+val+'/', function(data){
+                        var html = '';
+                        var len = data.categories.length;
+                        for (var i = 0; i< len; i++) {
+                            html += '<option value="' + data.categories[i][0] + '">' + data.categories[i][1] + '</option>';
+                        }
+                        $('#id_deal_type-category').html(html);
+
+                        commission_rows.toggle(data.info['show_commission_field'])
+                        pledge_rows.toggle(data.info['show_pledge_field'])
+                        period_rows.toggle(data.info['show_period_field'])
+                        price_rows.toggle(data.info['show_price_field'])
+
+                    });
+                } else {
+                    $('#id_deal_type-category').find('option').remove().end().append('<option value="">---------</option>').val('');
+                    commission_rows.hide();
+                    pledge_rows.hide();
+                    period_rows.hide();
+                }
+            }).change();
+
+            // Изменился тип недвижимости
+            $("select#id_deal_type-category").on('change',function(){
+
+                var selector = $('label[for=id_deal_type-price_type]');
+
+                selector.hide()
+
+                if ($(this).val()) {
+                    $.getJSON("/catalog/get_category_info/"+$(this).val()+"/",{}, function(response){
+
+                        var data = response;
+                        if (data['info']['show_additional_price_options']) {
+                            selector.show()
+                        } else {
+                            selector.hide()
+                        }
+                    });
+                }
+            }).change();
+
+
+        })
+    </script>
+{% endblock %}
+
+{% block wizard_step %}{% endblock %}

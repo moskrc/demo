@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+
+{% block title %}Карта - Каталог - {{block.super}}{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init () {
+            var myMap = new ymaps.Map("map", {center: [{{ request.location.lat|stringformat:"f" }},{{ request.location.lng|stringformat:"f" }}],
+                zoom: 10});
+
+
+            {% for p in products %}
+                myMap.geoObjects.add(new ymaps.Placemark([{{ p.get_latest_location.lat|stringformat:"f" }}, {{ p.get_latest_location.lng|stringformat:"f" }}], {
+                    balloonContent: '<strong>{{ p.title }}</strong>\n'+
+                            '<p>{{ p.deal_type }}/{{ p.category }}</p>\n'+
+                            '<strong>{{ p.get_price }}</strong>\n'+
+                            '<p><a href="{{ i.get_absolute_url }}">Просмотр</a></p>'
+                }//,
+//                        {
+//                    iconImageHref: 'http://api.yandex.ru/maps/doc/jsapi/2.x/examples/images/myIcon.gif', // картинка иконки
+//                    iconImageSize: [30, 42], // размеры картинки
+//                    iconImageOffset: [-3, -42] // смещение картинки
+//                }
+                ));
+            {% endfor %}
+
+            myMap.controls
+                    .add('zoomControl')
+                    .add('typeSelector')
+                    .add('smallZoomControl', { right: 5, top: 75 })
+                    .add('mapTools');
+            myMap.controls
+                    .add(new ymaps.control.ScaleLine());
+
+        }
+    </script>
+
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span9">
+            <h2>Объекты на карте</h2>
+        </div>
+        <div class="span3" style="padding-top: 20px">
+            <a class="btn pull-right" href="{% url view_region %}">Показать списком</a>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div id="map" class="span12" style="height: 500px"></div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+
+        </div>
+    </div>
+
+
+{% endblock %}

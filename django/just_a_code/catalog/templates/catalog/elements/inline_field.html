@@ -1,0 +1,13 @@
+{% load crispy_forms_field %}
+
+{% if field.is_hidden %}
+    {{ field }}
+{% else %}
+    <label for="{{ field.id_for_label }}" class="{% if field.errors %} error{% endif %}" style="display: inline; padding-right: 15px" >
+
+        {% crispy_field field %}
+        {% include 'bootstrap/layout/help_text_and_errors.html' %}
+
+    </label>
+
+{% endif %}

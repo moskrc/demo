@@ -1,0 +1,334 @@
+Install QG project on d2.iohost.com
+
+Step by step howto
+
+Prepare
+
+# yum update
+# yum install httpd-devel mysql55-devel python26 python26-devel python26-virtualenv mercurial python-setuptools zlib-devel wget openssl-devel pcre pcre-devel sudo gcc make autoconf automake
+# /usr/sbin/useradd qg
+# passwd qg
+
+Install Nginx
+
+# cd /usr/local/src/
+# wget http://nginx.org/download/nginx-1.0.12.tar.gz
+# tar xzvf nginx-1.0.12.tar.gz
+# cd nginx-1.0.12
+# ./configure --sbin-path=/usr/local/sbin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log   --pid-path=/var/run/nginx/nginx.pid --lock-path=/var/lock/nginx.lock --user=nginx --group=nginx --with-http_ssl_module  --http-log-path=/var/log/nginx/access.log
+# make
+# make install
+# /usr/sbin/useradd -M -r --shell /sbin/nologin --home-dir /usr/local/nginx nginx
+# wget http://dl.dropbox.com/u/608563/shared/conf/centos/nginx-init-rpm.sh
+# mv nginx-init-rpm.sh /etc/rc.d/init.d/nginx
+# chmod +x /etc/rc.d/init.d/nginx
+# /sbin/chkconfig --add nginx
+# /sbin/chkconfig --level 2345 nginx on
+
+Install mod_wsgi
+
+# cd /usr/local/src/
+# wget http://modwsgi.googlecode.com/files/mod_wsgi-3.3.tar.gz
+# tar xzvf mod_wsgi-3.3.tar.gz
+# cd mod_wsgi-3.3
+# ./configure --with-python=/usr/bin/python2.6
+# make
+# make install
+
+Install GeoIP
+
+# cd /usr/local/src
+# wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.8.tar.gz
+# tar xzvf GeoIP-1.4.8.tar.gz 
+# cd GeoIP-1.4.8
+# ./configure
+# make
+# make install
+# cd /usr/local/share/GeoIP
+# wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+# gunzip GeoLiteCity.dat.gz
+
+
+Create MySQL database
+
+# mysql -uroot -p
+mysql> CREATE USER 'qg'@'localhost' IDENTIFIED BY  'q3wQW8etEf4xRysX';
+mysql> CREATE DATABASE `qg` CHARACTER SET utf8 COLLATE utf8_general_ci;
+mysql> GRANT ALL PRIVILEGES ON  `qg` . * TO  'qg'@'localhost';
+mysql> exit;
+
+
+Web host dir and project
+
+# mkdir -p /var/www/d2.iohost.com/{logs,public_html}
+# chown -R qg:qg /var/www/d2.iohost.com
+
+Clone project
+
+# su qg
+$ cd /var/www/d2.iohost.com/
+$ hg clone https://pmtolk:SuperFriend69@brainz.braincargo.net/hg/mycms project
+$ cd project
+$ hg up qg
+
+
+Setup project
+
+$ cd /var/www/d2.iohost.com/project
+$ vim src/setting_local.py
+DEBUG=False
+SECRET_KEY = 'abc%*ultrb@u6j&l_57)@&ay1=tmqh@i95wpaa^r34jh3df-&4'
+GOOGLE_MAP_KEY='ABQIAAAAia66ObdK8ZhgEWLb_7BLUxQ7HUUmYbG7Jc5stOn6kinsqm3GJhREUSSjzef-LXzZBVzHewNmI8ZSkA'
+SESSION_COOKIE_DOMAIN = '.d2.iohost.com'
+SITE_ID=1
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'qg',
+        'USER': 'qg',
+        'PASSWORD': 'q3wQW8etEf4xRysX',
+        'HOST': '',
+        'PORT': '',
+        'OPTIONS': {
+           'init_command': 'SET storage_engine=INNODB;',
+        }
+    }
+}
+
+
+LOGGING = {
+    'version': 1,
+
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': '/var/www/d2.iohost.com/logs/project.log',
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 5,
+            'formatter': 'verbose'
+
+        },
+        'file_tracking': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': '/var/www/d2.iohost.com/logs/project_tracking.log',
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 5,
+            'formatter': 'verbose'
+
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'daqri': {
+            'handlers': ['file','console'],
+            'level': 'DEBUG',
+        },
+        'daqri.tracking': {
+            'handlers': ['file_tracking','console'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+    }
+}
+
+
+Install django and other stuff
+
+$ cd /var/www/d2.iohost.com/
+$ virtualenv-2.6 --no-site-packages env
+$ source env/bin/activate
+(env) $ pip install mysql-python pil django==1.3.1 south python-dateutil==1.5 vobject
+(env) $ wget http://geolite.maxmind.com/download/geoip/api/python/GeoIP-Python-1.2.7.tar.gz
+(env) $ tar xzvf GeoIP-Python-1.2.7.tar.gz
+(env) $ cd GeoIP-Python-1.2.7
+(env) $ pip install .
+(env) $ cd ..
+(env) $ rm -rf GeoIP-Python-1.2.7*
+
+
+
+Create project tables
+
+(env) $ project/src
+(env) $ ./manage.py syncdb
+(env) $ ./manage.py migrate
+(env) $ deactivate
+
+Create launch scripts and robots.txt
+
+$ cd /var/www/d2.iohost.com/public_html
+
+$ vim .htaccess
+AddHandler wsgi-script .wsgi
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /django.wsgi/$1 [QSA,PT,L]
+
+$ vim django.wsgi
+import os, sys
+sys.path.insert(0, '/var/www/d2.iohost.com/project/src/')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+import django.core.handlers.wsgi
+application = django.core.handlers.wsgi.WSGIHandler()
+
+$ vim robots.txt
+User-Agent: *
+Disallow: /
+
+
+
+Apache Config
+
+# vim /etc/httpd/conf/httpd.conf
+1. add
+LoadModule wsgi_module modules/mod_wsgi.so 
+2. find
+Listen 80
+change to
+#Listen 80
+Listen 127.0.0.1:8080
+3. Save file
+4. Add host
+# vim /etc/httpd/conf.d/domains.conf
+
+WSGISocketPrefix /var/run/wsgi
+
+<VirtualHost 127.0.0.1:8080>
+        SuexecUserGroup qg qg
+        ServerName d2.iohost.com
+        DocumentRoot /var/www/d2.iohost.com/public_html
+        CustomLog /var/www/d2.iohost.com/logs/apache-access.log combined
+        ErrorLog /var/www/d2.iohost.com/logs/apache-error.log
+        ServerAlias www.d2.iohost.com
+        ServerAdmin webmaster@d2.iohost.com
+        WSGIDaemonProcess d2.iohost.com user=qg group=qg processes=1 threads=5 display-name=%{GROUP} python-path=/var/www/d2.iohost.com/env/lib/python2.6/site-packages
+        WSGIProcessGroup d2.iohost.com
+        WSGIApplicationGroup %{GLOBAL}
+
+        <Directory /var/www/d2.iohost.com/public_html>
+                AllowOverride FileInfo
+                Options ExecCGI MultiViews Indexes
+                MultiviewsMatch Handlers
+                Options +FollowSymLinks
+                Order allow,deny
+                Allow from all
+        </Directory>
+</VirtualHost>
+
+
+# /etc/init.d/httpd restart
+
+Nginx config
+
+# vim /etc/nginx/domains.conf
+server {
+    listen       80;
+    server_name  d2.iohost.com www.d2.iohost.com;
+    access_log  /var/www/d2.iohost.com/logs/nginx-http-access.log;
+
+    location /static/admin/ {
+        alias /var/www/d2.iohost.com/env/lib/python2.6/site-packages/django/contrib/admin/media/;
+    }
+
+    location  /static/ {
+        root /var/www/d2.iohost.com/project/src/;
+    }
+
+    location / {
+        proxy_pass  http://127.0.0.1:8080;
+        include     /etc/nginx/proxy.conf;
+    }
+}
+
+server {
+    listen  *:443;
+    access_log  /var/www/d2.iohost.com/logs/nginx-https-access.log;
+    server_name  d2.iohost.com www.d2.iohost.com;
+
+    ssl    on;
+    ssl_certificate         /etc/nginx/ssl/server.crt;
+    ssl_certificate_key     /etc/nginx/ssl/server.key;
+    ssl_session_cache  shared:SSL:10m;
+    ssl_session_timeout  5m;
+    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    ssl_ciphers RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+    ssl_prefer_server_ciphers   on;
+
+    location /static/admin/ {
+        alias /var/www/d2.iohost.com/env/lib/python2.6/site-packages/django/contrib/admin/media/;
+    }
+
+    location  /static/ {
+        root /var/www/d2.iohost.com/project/src/;
+    }
+
+    location / {
+        proxy_pass  http://127.0.0.1:8080;
+        include     /etc/nginx/proxy.conf;
+		proxy_set_header X-Forwarded-Protocol https;
+		proxy_set_header X-Forwarded-Proto https;
+    }
+}
+
+# vim /etc/nginx/nginx.conf
+Add 
+include       domains.conf;
+to http section
+
+# vim /etc/nginx/proxy.conf
+proxy_redirect              off;
+proxy_set_header            Host $host;
+proxy_set_header            X-Real-IP $remote_addr;
+proxy_set_header            X-Forwarded-For $proxy_add_x_forwarded_for;
+client_max_body_size        50m;
+client_body_buffer_size     128k;
+proxy_connect_timeout       90;
+proxy_send_timeout          90;
+proxy_read_timeout          90;
+proxy_buffer_size           4k;
+proxy_buffers               4 32k;
+proxy_busy_buffers_size     64k;
+proxy_temp_file_write_size  64k;
+
+Self Signed SSL certificates
+
+# mkdir /etc/nginx/ssl
+# cd /etc/nginx/ssl
+# openssl req -new -x509 -nodes -out server.crt -keyout server.key
+# chmod 600 server.key
+# /etc/init.d/nginx restart
+
+
+Install phpMyAdmin
+
+# yum install phpmyadmin mod_ssl
+# vim /etc/httpd/conf.d/ssl.conf
+change 443 to 8090 (2 times) and save file
+
+# vim /etc/httpd/conf.d/phpMyAdmin.conf
+Add "Allow from All" to first and second sections
+Add "AllowOverride FileInfo" for first section
+
+# vim /usr/share/phpMyAdmin/.htaccess
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}:8090%{REQUEST_URI}
+
+# /etc/init.d/httpd restart
+
+Thats All!

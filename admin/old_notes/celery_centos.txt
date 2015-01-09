@@ -1,0 +1,49 @@
+New software v. 2
+--------------------
+
+RabbitMQ
+
+$ sudo yum install rabbitmq-server
+$ sudo /sbin/chkconfig --add rabbitmq-server
+$ sudo /etc/init.d/rabbitmq-server start
+
+For projects:
+(env)[daqri@4d-stage1 src]$ pip install celery django-celery django-supervisor
+(env)[daqri@4d-stage1 src]$ ./manage.py syncdb
+(env)[daqri@4d-stage1 src]$ ./manage.py migrate
+
+Add 
+import djcelery
+djcelery.setup_loader()
+to django.wsgi 
+
+Add 
+/var/www/d1.iohost.com/project/src/cmd.sh supervisor --daemonize --logfile=/var/www/d1.iohost.com/logs/supervisor.log
+to /etc/rc.local
+
+
+=========================================
+HOW TO USE
+=========================================
+
+(env)[daqri@4d-stage1 src]$ ./manage.py supervisor status
+celerybeat                       RUNNING    pid 6894, uptime 0:18:03
+celerycam                        RUNNING    pid 6892, uptime 0:18:03
+celeryd                          RUNNING    pid 7437, uptime 0:15:27
+
+(env)[daqri@4d-stage1 src]$ ./manage.py supervisor stop/start/restart PROCESS_NAME
+or 
+(env)[daqri@4d-stage1 src]$ ./manage.py supervisor shell       
+celerybeat                       RUNNING    pid 6894, uptime 0:20:46
+celerycam                        RUNNING    pid 6892, uptime 0:20:46
+celeryd                          RUNNING    pid 7437, uptime 0:18:10
+supervisor> 
+
+(env)[daqri@4d-stage1 src]$ ./manage.py supervisor help  
+
+default commands (type help <topic>):
+=====================================
+add    clear  fg        open  quit    remove  restart   start   stop  update 
+avail  exit   maintail  pid   reload  reread  shutdown  status  tail  version
+
+

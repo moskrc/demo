@@ -1,0 +1,25 @@
+{% extends "accounts/base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+{% load crispy_forms_tags %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#main" >Основная информация и стоимость</a></li>
+        <li><a href="{% url edit_product_map product.id %}" >Расположение на карте</a></li>
+        <li><a href="{% url edit_product_photos product.id %}">Фотографии</a></li>
+    </ul>
+
+    <form action="." method="POST" class="form-horizontal">{% csrf_token %}
+
+        {% crispy price_form price_form.helper %}
+
+        {% crispy object_form object_form.helper %}
+
+        {% include 'common/elements/form_submit.html' with value='Сохранить' %}
+    </form>
+{% endblock %}

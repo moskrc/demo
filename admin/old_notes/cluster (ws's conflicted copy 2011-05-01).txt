@@ -1,0 +1,107 @@
+**********************************************************************************
+
+Terms: 
+
+RS - replica set
+
+Ports:
+
+shard - 28000
+conf - 28001
+mongos - 30000
+
+**********************************************************************************
+
+
+1. Create Dir
+
+sudo mkdir /srv/db/mongodb-shard
+sudo chown mongodb:mongodb /srv/db/mongodb-shard
+
+sudo mkdir /srv/db/mongodb-config
+sudo chown mongodb:mongodb /srv/db/mongodb-config
+
+2. Copy files to /etc/init.d/
+
+and 
+
+sudo /etc/init.d/mongodb stop
+sudo /sbin/chkconfig mongodb off
+
+---
+
+sudo /sbin/chkconfig --add mongodb-shard
+sudo /sbin/chkconfig --add mongodb-config   OR   sudo /sbin/chkconfig --add mongos
+
+sudo /sbin/chkconfig mongodb-shard on
+sudo /sbin/chkconfig mongodb-config on    OR   sudo /sbin/chkconfig mongos on
+
+
+3. Run
+
+sudo /etc/init.d/mongodb-shard start
+sudo /etc/init.d/mongodb-config start	OR sudo /etc/init.d/mongo start
+
+
+
+
+
+CREATE REPLICA SET
+
+/opt/mongodb/bin/mongo localhost:28000
+> rs.status()
+> rs.initiate()
+> db.isMaster()
+> rs.add("ANOTHER_SERVER.daqri.com:28000")
+> rs.status()
+
+
+CREATE SHARD
+
+/opt/mongodb/bin/mongo localhost:30000
+> use t1
+> db.foo.insert({x:1})
+> db.foo.insert({x:2})
+> db.foo.insert({x:3})
+
+> use admin
+> db.runCommand( { listshards : 1 } ); 
+> db.runCommand( { addshard : "rs1/67.222.136.228:28000,209.236.112.47:28000,67.222.149.32:28000" } );
+> db.runCommand( { addshard : "rs2/67.222.136.226:28000,209.236.112.48:28000,67.222.149.31:28000" } );
+> db.runCommand( { addshard : "rs3/67.222.136.227:28000,209.236.112.49:28000,67.222.149.33:28000" } );
+
+> db.runCommand( { enablesharding : "shard-test" } );
+> db.runCommand({"shardCollection":"t1.foo","key":{"_id":1}})
+
+
+
+SHARD NOTES
+
+db.fs.chunks.ensureIndex({files_id: 1});
+db.runCommand({ shardcollection : "test.fs.chunks", key : { files_id : 1 }})
+
+db.runCommand({"shardcollection" : "foo.bar", "key" : {"_id" : 1}})
+db.printShardingStatus()
+db.runCommand( { removeshard : "rs25" } );
+
+> use config
+> db.settings.update( { _id: "balancer" }, { $set : { stopped: true } } , true );
+> db.settings.update( { _id: "balancer" }, { $set : { stopped: false } } , true );
+
+
+
+
+
+
+
+cfg = {"_id" : "rs1", "members":[{ "_id":0, "host": "67.222.136.228:28000"},{"_id":1,"host":"209.236.112.47:28000"},{"_id" : 2,"host": "67.222.149.32:28000"}] }
+cfg = {"_id" : "rs2", "members":[{ "_id":0, "host": "67.222.136.226:28000"},{"_id":1,"host":"209.236.112.48:28000"},{"_id" : 2,"host": "67.222.149.31:28000"}] }
+cfg = {"_id" : "rs3", "members":[{ "_id":0, "host": "67.222.136.227:28000"},{"_id":1,"host":"209.236.112.49:28000"},{"_id" : 2,"host": "67.222.149.33:28000"}] }
+
+
+
+
+
+
+
+

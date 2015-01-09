@@ -1,0 +1,53 @@
+{% extends "base_bs.html" %}
+
+{% load assets %}
+
+{% block css %}
+    {% assets "css_bootstrap" %}
+        <link href="{{ ASSET_URL }}" media="all" type="text/css" rel="stylesheet"/>
+    {% endassets %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <h1 class="page-header"><small>Новые сообщения и задачи</small></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            {% block dashboard_breadcrumbs %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span9">
+            {% block main %}
+            <h5 class="page-header">Новые сообщения <small> <a href="#">(все сообщения)</a></small></h5>
+            {% for m in new_messages %}
+                {% include "chat/elements/dashboard_message.html" %}
+            {% endfor %}
+            {% endblock %}
+
+        </div>
+
+        <div class="span3">
+            {% block sidebar %}
+            <div class="sidebar-nav">
+                <div style="width:300px; ">
+                    <h5 class="page-header">Новые задачи <small> <a href="#">(все задачи)</a></small></h5>
+                    <ul class="nav nav-list">
+                        {% for t in new_tasks %}
+                            <li {% if task.id == t.id %}class="active" {% endif %}><a href="{% url dashboard_task t.id  %}">#{{ t.id }} {{ t.service }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+
+{% endblock %}

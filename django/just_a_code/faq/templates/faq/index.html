@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load partition_tags %}
+
+{% block extra_meta %}{{ block.super }}
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('.collapsed .question').bind('click',function(){
+            $(this).next().toggle(200);
+            return false
+        })
+    });
+    </script>
+
+    <style type="text/css">
+
+
+
+        .question {
+            font-weight: bold;
+        }
+
+        .collapsed .answer {
+            display: none;
+        }
+
+        .answer {
+            margin-top: 20px;
+        }
+
+        div.qa {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+
+    ul.qa-chapters li a:hover {
+        text-decoration: underline;
+        background-color: inherit;
+        color: #06c;
+        text-decoration: underline;
+    }
+    </style>
+{% endblock %}
+
+{% block header %}<h1>Вопросы и ответы</h1>{% endblock %}
+
+{% block breadcrumbs %}
+    {% if chapter %}
+        <ul class="breadcrumb">
+            <li>
+                <a href="{% url faq_index %}">Вопросы и ответы</a> <span class="divider">/</span>
+            </li>
+            <li class="active">{{ chapter }}</li>
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if chapter %}
+        <h2>{{ chapter }}</h2>
+    {% endif %}
+
+    {% for col in chapters|rows:3%}
+        <ul class="span4 nav nav-list nav-collapse qa-chapters" style="padding-left: 0px; {% if forloop.last %}padding-right: 0px{% endif %}">
+            {% for item in col %}
+                <li>
+                        <h3>{{ item }}</h3>
+                        {% if item.children.count > 0 %}
+                        <ul class="nav">
+                            {% for ch in item.children.all %}
+                                <li><a href="{% url faq_index ch.slug %}">{{ ch }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+
+    {% if chapter %}
+        {% for q in questions %}
+            <div class="row">
+                <div class="span12">
+                    <div class="qa {% if q.collapsed %}collapsed{% endif %}">
+                        {% if q.collapsed %}
+                            <a href="#" class="question" id="question_{{ q.id }}">{{ q.question }}</a>
+                        {% else %}
+                            <strong>{{ q.question }}</strong>
+                        {% endif %}
+                        <div class="answer" id="answer_{{ q.id }}">
+                            {{ q.answer|markdown:"wikilinks,footnotes,tables,extra" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="row">
+                <div class="span12">
+                    <div class="well"> Пока не добавлено ни одного вопроса</div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

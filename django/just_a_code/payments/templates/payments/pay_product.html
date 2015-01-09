@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block extra_meta %}
+    {{ block.super }}
+    <script type="text/javascript" charset="utf-8">
+
+    </script>
+{% endblock %}
+
+
+ {% block header %}
+    <h1>Оплата объявления</h1>
+{% endblock %}
+
+{% block content %}
+    <p>Стоимость показа объявления <strong>{{ sc.price_per_day }} р/день</strong>.</p>
+    <hr/>
+    <h5>Заголовок объявления: </h5>
+    <h3>{{ product.title }} [ID: {{ product.id }}]</h3>
+
+    <form action="." class="form" method="POST">{% csrf_token %}
+        {% include 'common/elements/form.html' %}
+        {% include 'common/elements/form_submit.html' with text='Перейти к оплате' %}
+    </form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "accounts/base.html" %}
+
+{% load thumbnail %}
+{% load pagination_tags %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block account_content %}
+ <form action="." method="POST" class="form-horizontal">{% csrf_token %}
+    <h2>"{{ product.title }}"</h2>
+    <h3>Вы действительно хотите удалить эту публикацию?</h3>
+    <input class="btn btn-danger" type="submit" value="Удалить">
+ </form>
+{% endblock %}

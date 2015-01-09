@@ -1,0 +1,241 @@
+body {
+	font-family: Arial, Verdana, Helvetica;
+	font-size: 90%;
+	background-color: silver;
+	margin: 8px;
+}
+
+h1 {
+	font-size: 200%;
+	font-weight: bold;
+	color: #ab003f;
+	margin-bottom: 19px;
+}
+
+h3 {
+	font-size: 120%;
+	font-weight: bold;
+	color: #ab003f;
+	margin-bottom: 19px;
+}
+
+
+p {
+	line-height: normal;
+}
+
+a:link, a:visited, a:link img, a:visited img {
+	color: #ab003f;
+	text-decoration: none;
+}
+
+a:hover, a:hover img {
+	text-decoration: underline;
+	color: #e96812;
+	
+}
+
+img#logo {
+	border: 2px solid #ab003f;
+}
+
+
+img#logo:hover {
+	border: 2px solid #e96812;
+}
+
+
+INPUT, TEXTAREA, BUTTON {
+	margin: 2px;
+}
+
+input:focus, input:hover {
+        border:1px solid #333333;
+}
+
+input, select, textarea {
+    margin: 2px;
+    border:1px solid gray;
+}
+
+TD {
+	vertical-align: middle;
+}
+
+#header {
+	margin-bottom: 20px;
+	background-color: gray;
+	text-align: right;
+}
+
+#spacer {
+	margin-bottom: 20px;
+	background-color: gray;
+	text-align: right;
+	height: 25px;
+}
+
+#install_progress_messages, #install {
+	text-align: center;
+}
+
+
+#content {
+	margin-bottom: 20px;
+}
+
+#footer {
+	padding: 5px;
+	margin-bottom: 20px;
+	background-color: gray;
+	text-align: center;
+	color: white;
+}
+
+#posts {
+	margin-top: 10px;
+}
+
+.post {
+	background-color: white;
+	padding: 5px;
+	margin-bottom: 10px;
+	clear: both;
+	overflow: hidden;
+
+}
+
+.post_text_part {
+	width: 100%;
+	border: 1px solid #ab003f;
+	float: left;
+}
+
+.post_text_part p {
+	padding: 0 5px 5px 5px;
+	margin: 0px;
+}
+
+.post_text_part .post_top_line {
+	background-color: #acadb0;
+	color: #ab003f;
+	font-weight: bold;
+	overflow: hidden;
+	padding: 5px;
+}
+
+.post_text_part .post_top_line .id {
+	float: left;
+}
+
+.post_text_part .post_top_line .email {
+	float: left;
+	padding-left: 20px;
+}
+
+
+.post_text_part .post_top_line .created_at {
+	float: right;
+}
+
+
+.post_text_part .post_bottom_line {
+}
+
+.post_text_part .name {
+	padding: 5px;
+	font-weight: bold;
+	font-size: 120%;
+}
+
+
+
+.post_image_part {
+	
+	height:150px;
+	/*border: 1px solid green;*/
+	float: right;
+	padding: 0 10px 10px 10px;
+	overflow: hidden;
+	
+}
+
+.error {
+	color: red;
+	font-size: 90%;
+	padding-left: 2px;
+}
+
+
+#paginator {
+	line-height:22px;
+	clear:both;
+	padding-top:12px;
+}
+
+#paginator #statistic {
+	background-color: white;
+	padding: 5px;
+}
+
+#paginator #pages {
+	margin-top: 10px;
+}
+
+#paginator .stat_digit {
+	font-weight: bold;
+	color: #ab003f;
+}
+
+
+#paginator a:link, #paginator a:visited{
+	padding:7px;
+	padding-top:2px;
+	padding-bottom:2px;
+	border:1px solid white;
+	margin-left:4px;
+	text-decoration:none;
+	background-color:gray;
+	color:white;
+	width:22px;
+	font-weight:normal;
+}
+
+#paginator a:hover {
+	background-color:#eee;
+	border:1px solid #f09d66;
+	color:#d05300;	
+}
+
+#paginator .active_link {
+	padding:7px;
+	padding-top:2px;
+	padding-bottom:2px;
+	border:1px solid #ab003f;
+	margin-left:4px;
+	text-decoration:none;
+	background-color:white;
+	color:#d05300;
+	cursor:default;
+}
+
+#paginator .disabled_link {
+	padding:7px;
+	padding-top:2px;
+	padding-bottom:2px;
+	border:1px solid white;
+	margin-left:4px;
+	text-decoration:none;
+	background-color:silver;
+	color:#D7D7D7;
+	cursor:default;
+}
+
+#install_form table{
+	margin-right: auto;
+	margin-left: auto;
+}
+
+#install_form table td{
+	padding-left: 5px;
+}

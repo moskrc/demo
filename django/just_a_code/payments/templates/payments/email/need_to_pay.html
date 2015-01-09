@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+
+<h1>Завершается срок показа объявления</h1>
+
+<h2>{{ product }}</h2>
+<table border="1" cellpadding="5" cellspacing="0" width="600px;">
+{% if not product.is_demand %}
+<tr><td>Оплачено до:</td><td>{{product.paid_until|date:"d.m.y"}}</td></tr>
+{% else %}
+<tr><td>Опубликовано до:</td><td>{{product.paid_until|date:"d.m.y"}}</td></tr>
+{% endif %}
+<tr><td>Осталось дней:</td><td>{{days_remains}}</td></tr>
+</table>
+
+<p><strong>Отправлено:</strong> {{sended|date:"d.m.y H:i:s"}}</p>
+
+{% with domain_url=product.get_latest_location.region.get_url %}
+<p>Для того чтобы продлить ваше объявление перейдите <a href="{{ domain_url }}payments/{{ product.id }}/">по ссылке</a>.</p>
+{% endwith %}
+</body>
+</html>
