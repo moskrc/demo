@@ -1,0 +1,92 @@
+.icon {
+    width: 33px;
+    height: 35px;
+    padding: 1px 0;
+    background-image: url('/static/images/plugins/icons.png');
+    background-repeat: no-repeat;
+    margin: auto;
+}
+
+ul.thumbnails li {
+    text-align: center
+}
+
+.item_ar {
+    background-position: 0 0;
+}
+
+.item_ar.active {
+    background-position: -33px 0;
+}
+
+.item_coupon {
+    background-position: 0 -35px;
+}
+
+.item_coupon.active {
+    background-position: -33px -35px;
+}
+
+.item_form {
+    background-position: 0 -70px;
+}
+
+.item_form.active {
+    background-position: -33px -70px;
+}
+
+.item_gallery {
+    background-position: 0 -105px;
+}
+
+.item_gallery.active {
+    background-position: -33px -105px;
+}
+
+.item_image {
+    background-position: 0 -140px;
+}
+
+.item_image.active {
+    background-position: -33px -140px;
+}
+
+.item_link {
+    background-position: 0 -175px;
+}
+
+.item_link.active {
+    background-position: -33px -175px;
+}
+
+.item_qrcode {
+    background-position: 0 -210px;
+}
+
+.item_qrcode.active {
+    background-position: -33px -210px;
+}
+
+.item_social {
+    background-position: 0 -245px;
+}
+
+.item_social.active {
+    background-position: -33px -245px;
+}
+
+.item_sound {
+    background-position: 0 -280px;
+}
+
+.item_sound.active {
+    background-position: -33px -280px;
+}
+
+.item_video {
+    background-position: 0 -315px;
+}
+
+.item_video.active {
+    background-position: -33px -315px;
+}

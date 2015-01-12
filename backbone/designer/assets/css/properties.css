@@ -1,0 +1,89 @@
+div.properties input, div.properties textarea {
+    width: 90%;
+}
+
+.properties select {
+    /*width: 180px;*/
+}
+
+.properties-area {
+    /*width: 195px;*/
+    /*margin-left: 10px;*/
+}
+
+.properties div.input-xlarge {
+    /*width:165px;*/
+}
+
+.properties_form {
+    overflow-x: hidden;
+}
+
+
+div.layers_block ul {
+    text-align: left
+}
+
+
+.properties #content .control-label {
+    line-height:18px;
+    margin-top: 5px;
+    float: left;
+    width: 100px;
+    font-weight: normal;
+}
+
+.properties #content .controls {
+    margin-left: 100px;
+    margin-bottom: 5px;
+    /*width: 65px;*/
+}
+
+.properties #content .controls select {
+    /*width: 80px;*/
+}
+
+
+
+.properties .field-label {
+    line-height:18px;
+    margin-top: 5px;
+    float: left;
+    width: 100px;
+}
+
+.properties .field-value {
+    margin-left: 100px;
+    margin-bottom: 5px;
+    /*width: 65px;*/
+}
+
+.properties .field-value input[name="auto_start"] {
+    margin-top: 9px;
+}
+
+.properties, .layers {
+    background-color: #ffffff;
+    padding: 5px;
+    min-height: 0px;
+}
+
+.bbf-list {
+    padding-top: 6px;
+}
+
+.bbf-list li {
+    /*width: 85px;*/
+}
+
+.bbf-del {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+    
+
+.control-group {
+    clear:both;
+}

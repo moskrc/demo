@@ -1,0 +1,230 @@
+.layers_block ul li span {
+    cursor: pointer
+}
+
+.layers_block ul li span.active {
+    font-weight: bold;
+}
+
+.available_items ul.thumbnails li{
+    margin: 0 0 0px 20px;
+}
+
+.target div.ui-droppable {
+    position: relative;
+    min-height: 100%;
+    height: 100%;
+
+}
+
+.target div .items {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+}
+
+.trackable_image_img {
+    max-width: 580px;
+}
+
+ul.ui-droppable li.is_active {
+    background-color: yellow;
+}
+
+ul.items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.items li div.menu_item_buttons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.controls .value {
+    display: inline-block;
+}
+
+.controls label {
+    display: inline-block;
+    margin-bottom: 9px;
+    vertical-align: middle;
+    width: 60px;
+    text-align: right;
+}
+
+.control-group > label {
+    text-align: left;
+    font-weight: bold;
+    display: block;
+}
+
+div.error label {
+    color: red;
+}
+
+.elements, .image {
+    position: relative;
+}
+
+.element {
+    position: absolute;
+}
+
+ul.elements li {
+    z-index: 100;
+}
+
+
+.toolbar {
+    /*width: 64px;*/
+    background: #333;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+ul.tools {
+    list-style: none;
+    margin: 0;
+}
+
+li.tool {
+    background: #686868;
+    width: 54px;
+    height: 37px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2px;
+    margin-bottom: 3px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+.tool-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.target-area {
+    width: 580px;
+    margin: 0px auto;
+}
+
+.target-zone {
+    border: 1px dashed silver;
+    padding: 20px;
+}
+
+.sidebar-area {
+    /*width: 175px;*/
+    /*background-color: rgb(218, 217, 217);*/
+    background-color: #ffffff;
+}
+
+
+.layers-area {
+    /*width: 175px;*/
+}
+
+.target-item {
+    height: 70px;
+    width: 70px;
+    background-color: rgba(51, 51, 51, 0.8);
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    margin-left: -35px;
+    margin-top: -35px;
+}
+
+.target-item .icon {
+    position: absolute;
+    top: 17px;
+    left: 18px;
+}
+
+
+.target-item.selected {
+    height: 90px;
+    width: 90px;
+    margin-left: -45px;
+    margin-top: -45px;
+}
+
+.target-item.selected .icon {
+    position: absolute;
+    top: 27px;
+    left: 28px;
+}
+
+.target-region {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.title {
+    width: 100%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.toolbar .title {
+    color: #ccc;
+    margin: 10px 0;
+}
+
+.nav {
+    text-align: center;
+}
+
+/* Modal dialogs change */
+.modal {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal label {
+    color: #ccc;
+    font-weight: normal;
+}
+
+.modal h3 {
+    color: #ccc;
+}
+
+.modal span {
+    color: #ccc;
+}
+
+.modal input[type=file] {
+    color: #888;
+}
+
+.modal .upload_preview {
+    color: #888;
+}
+
+.modal-header {
+    border: 0;
+}
+
+.modal-footer {
+    background: rgba(0, 0, 0, 0.5);
+    border: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+p.fileUploader {
+    border: 0;
+    width: 100%;
+}
+
+select.layers {
+    /*width: 175px;*/
+}
+
+
