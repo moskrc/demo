@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block extra_meta %}{{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-header">Subscription
+                <small>{{ plan.title }}</small>
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            Your data plan is {{ plan }}.
+            <p>A lot of usesfull information here</p>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for i in items %}
+
+            <div class="panel panel-success">
+                 <div class="panel-heading">
+
+                    <small>{{ i.created|date:"d.m.Y h:m:i" }}</small> |
+                    {% if i.on_site %}
+                        <span class="label label-success">Офис: {{ i.city }}</span>
+                    {% else %}
+                        <span class="label label-info">Удаленная работа</span>
+                    {% endif %}
+                    |
+                    <span class="label label-warning">Оплата: {{ i.salary }}</span>
+
+                  {% if i.employer_name %} |
+                  {{ i.employer_name }}
+                  {% endif %}
+
+                 </div>
+
+              <div class="panel-body">
+                <h2><a href="{% url 'catalog_view' i.id %}">{{ i.title }}</a></h2>
+                  {{ i.description|linebreaks|truncatewords_html:100 }}
+              </div>
+
+              <div class="panel-footer"><a class="btn btn-default" href="{% url 'catalog_view' i.id %}">Подробнее</a> </div>
+            </div>
+
+    {% endfor %}
+
+    {% if not items %}
+        <div class="well" style="text-align: center">Пока вакансий нет. Давайте подождем работодателей или посмотрим на других сайтах. <br/>Еще можно подписаться на новые вакансии кликнув на одноименную кнопку вверху страницы. Удачи!</div>
+    {% endif %}
+
+{% endblock %}

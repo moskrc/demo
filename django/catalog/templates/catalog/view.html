@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-9">
+        <h2>{{ item.title }}</h2>
+        Добавлено: {{ item.created|date:"d.m.Y h:m:i" }} |
+        {% if item.on_site %}
+            <span class="label label-success">Офис: {{ item.city }}</span>
+        {% else %}
+            <span class="label label-info">Удаленная работа</span>
+        {% endif %}
+
+        <hr/>
+        <h3>Описание</h3>
+        {{ item.description|linebreaks }}
+
+        {% if item.employer_description %}
+        <hr/>
+        <h4>О Компании</h4>
+        {{ item.employer_description|linebreaks }}
+        {% endif %}
+    </div>
+
+    <div class="col-lg-3">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Информация</h3>
+          </div>
+          <div class="panel-body">
+              <dl>
+                  <dt>Город</dt>
+                  {% if item.on_site %}
+                      <dd>{{ item.city }}</dd>
+                  {% else %}
+                      <dd>Удаленная</dd>
+                  {% endif %}
+
+                  {% if item.employer_name %}
+                  <dt>Компания</dt>
+                  <dd>{{ item.employer_name }}</dd>
+                  {% endif %}
+
+                  {% if item.employer_website %}
+                  <dt>Сайт</dt>
+                  <dd><a target="_blank" href="{{ item.employer_website }}">{{ item.employer_website }}</a></dd>
+                  {% endif %}
+
+                  <dt>Оплата</dt>
+                  <dd>{{ item.salary }}</dd>
+              </dl>
+
+                <!-- Button trigger modal -->
+                <button class="btn btn-success" data-toggle="modal" data-target="#feedback_dlg">
+                  Откликнуться
+                </button>
+
+
+          </div>
+        </div>
+
+        <div class="sense sense-side">
+            {% if site.name == 'djangojobbers.ru' %}
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- djangojobbers-sidebar -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:240px;height:400px"
+                     data-ad-client="ca-pub-8893191334405901"
+                     data-ad-slot="1519800940"></ins>
+                <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            {% endif %}
+
+            {% if site.name == 'phpjobbers.ru' %}
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- phpjobbers-sidebar -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:240px;height:400px"
+                     data-ad-client="ca-pub-8893191334405901"
+                     data-ad-slot="2996534147"></ins>
+                <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="feedback_dlg" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+    <div class="modal-dialog" data-ng-app="formApp"  data-ng-controller="formController" data-ng-init="init('{% url 'catalog_feedback' item.id %}')">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Отправить отклик на вакансию</h4>
+            </div>
+
+            <!-- FORM -->
+            <form name="fb_form" data-ng-submit="processForm()">
+
+
+            <div class="modal-body">
+                    {% verbatim %}
+                    <div id="name-group" class="form-group name_field" data-ng-class="{ 'has-error' : errorName }">
+                        <label>Ваше имя</label>
+                        <input type="text" name="name" class="form-control" placeholder="" data-ng-model="formData.name">
+                        <span class="help-block" data-ng-show="errorName">{{ errorName.0 }}</span>
+                    </div>
+
+                    <div id="email-group" class="form-group email_field" data-ng-class="{ 'has-error' : errorEmail }">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="" data-ng-model="formData.email">
+                        <span class="help-block" data-ng-show="errorEmail">{{ errorEmail.0 }}</span>
+                    </div>
+
+                    <div id="feedback-group" class="form-group about_field" data-ng-class="{ 'has-error' : errorFeedback }">
+                        <label>Информация о себе</label>
+                        <textarea name="about" class="form-control"  data-ng-model="formData.about" rows="10"></textarea>
+                        <span class="help-block" data-ng-show="errorAbout">{{ errorAbout.0 }}</span>
+                    </div>
+
+                    <div id="country-group" class="form-group country_field" data-ng-class="{ 'has-error' : errorCountry }">
+                        <label>Страна</label>
+                        <input type="text" name="country" class="form-control" placeholder="Например 'Россия'" data-ng-model="formData.country">
+                        <span class="help-block" data-ng-show="errorCountry">{{ errorCountry.0 }}</span>
+                    </div>
+
+                    {% endverbatim %}
+
+                    <input type="hidden" name="item_id" value="{{ item.id }}"/>
+
+
+
+                <!-- SHOW DATA FROM INPUTS AS THEY ARE BEING TYPED -->
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                <button type="submit"  class="btn btn-primary">Отправить</button>
+            </div>
+
+            </form>
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}{{ block.super }}
+    <script type="text/javascript">
+        toastr.options = {
+          "closeButton": true,
+          "positionClass": "toast-top-full-width"
+        }
+
+
+		var formApp = angular.module('formApp', []);
+
+        formApp.config(['$httpProvider', function ($httpProvider) {
+            $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+            $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+        }]);
+
+		formApp.controller('formController', function($scope, $http) {
+            $scope.formData = {};
+
+            $scope.init = function(url) {
+                $scope.url = url;
+            }
+
+            $scope.processForm = function() {
+                $http({
+                    method  : 'POST',
+                    url     : $scope.url,
+                    data    : $.param($scope.formData),
+                    headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                    .success(function(data) {
+                        console.log(data);
+
+                        if (!data.success) {
+                            // if not successful, bind errors to error variables
+                            $scope.errorName = data.errors.name;
+                            $scope.errorEmail = data.errors.email;
+                            $scope.errorAbout = data.errors.about;
+                        } else {
+                            // if successful, bind success message to message
+                            $scope.errorName = $scope.errorEmail = $scope.errorAbout = false;
+                            $scope.message = data.message;
+
+                            toastr.success('Ваш отклик был успешно отправлен!')
+                            $('#feedback_dlg').modal('toggle');
+                        }
+                    });
+            };
+
+
+		})
+
+
+    </script>
+{% endblock %}

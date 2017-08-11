@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 text-center">
+            <h2 class="title">Sign up</h2>
+        </div>
+
+        <div class="col-md-6 col-md-offset-3">
+
+          <form action="{% url 'auth_register' %}{% if next %}?next={{ next }}{% endif %}" method="post" id="signup1">{% csrf_token %}
+              <br/>
+    	    {% crispy form %}
+            <input name="next" type="hidden" value="{{next}}">
+          </form>
+      </div>
+
+        <div class="col-md-6 col-md-offset-3 text-center">
+            <hr/>
+            <p>Sign up through one of the following social networks</p>
+            <div class="socl-nav text-center center-block social">
+                {% include 'registration/elements/social_buttons.html' %}
+            </div>
+        </div>
+        <div class="col-md-6 col-md-offset-3">
+            <hr/>
+            <div class="well text-center">
+                <strong>Already have an account? <br/><br/><a class="btn btn-success btn-lg" href="{% url 'auth_login' %}{% if next %}?next={{ next }}{% endif %}">Login here</a></strong>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

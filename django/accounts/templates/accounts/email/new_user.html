@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+
+<h1>Your credentials</h1>
+
+<p><strong>Date:</strong> {{ sent|date:"d.m.y H:i:s" }}</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="600px;">
+    <tr>
+        <td>Email / Username</td>
+        <td>{{ user.email }}</td>
+    </tr>
+    <tr>
+        <td>Password:</td>
+        <td>{{ generated_password }}</td>
+    </tr>
+    <tr>
+        <td>Login URL:</td>
+        <td>
+            <a href="http://{{ site.domain }}{% url 'auth_login' %}">
+                http://{{ site.domain }}{% url 'auth_login' %}
+            </a>
+        </td>
+    </tr>
+</table>
+
+{% if message %}
+    <br/>
+    {{ message|linebreaks }}
+{% endif %}
+
+
+</body>
+</html>

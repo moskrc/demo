@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign In{% endblock %}
+{% block css %}{{ block.super }}{% endblock %}
+
+{% block js %}{{ block.super }}
+<script type="text/javascript">
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3 text-center">
+        <h2 class="title">Sign in</h2>
+    </div>
+
+    <div class="col-md-6 col-md-offset-3">
+
+        <div class="login_area">
+            <form method="post" id="loginForm" action=".">{% csrf_token %}
+                {% crispy form %}
+                <input type="hidden" name="login_type" value="native">
+                <input name="next" type="hidden" value="{{next}}">
+                If you lost your password <a href="{% url 'auth_password_reset' %}">click here</a> please
+            </form>
+        </div>
+    </div>
+    <div class="col-md-6 col-md-offset-3 text-center">
+        <hr/>
+        <p>Sign in/up through one of the following social networks</p>
+        <div class="socl-nav text-center center-block social">
+            {% include 'registration/elements/social_buttons.html' %}
+        </div>
+    </div>
+    <div class="col-md-6 col-md-offset-3">
+        <hr/>
+        <div class="well text-center">
+            <strong>Never has been here? <br/><br/><a class="btn btn-success btn-lg" href="{% url 'auth_register' %}{% if next %}?next={{ next }}{% endif %}">Create an account</a></strong>
+        </div>
+    </div>
+</div>
+{% endblock %}

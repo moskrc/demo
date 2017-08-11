@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% load static %}
+{% block title %}Profile{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            {% block profile_breadcrumbs %}
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'profile' %}">Profile</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            {% endblock %}
+        </div>
+
+        <div class="col-md-12">
+
+            <div class="row">
+                <div class="col-md-9">
+                    {% block profile_content %}
+                    {% endblock %}
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

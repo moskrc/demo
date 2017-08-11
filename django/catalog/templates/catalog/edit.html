@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block js %}{{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var dep_el = $('#id_city').parent();
+            dep_el.hide();
+            $('#id_on_site').change(function () {
+                if (this.checked) {
+                    dep_el.slideDown()
+                } else {
+                    dep_el.slideUp()
+                }
+            }).change();
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h2>Редактирование вакансии</h2>
+
+    <form action="." method="POST" class="form" role="form">{% csrf_token %}
+        {% include 'common/elements/form_hidden_fields.html' %}
+        {% include 'common/elements/form_errors.html' %}
+
+        <br/>
+
+        {% include 'common/elements/form_field.html' with item=form.title %}
+        {% include 'common/elements/form_field.html' with item=form.description %}
+        {% include 'common/elements/form_field.html' with item=form.email %}
+        {% include 'common/elements/form_field.html' with item=form.salary %}
+        {% include 'common/elements/form_field.html' with item=form.on_site %}
+        {% include 'common/elements/form_field.html' with item=form.city %}
+
+        <br/>
+        <h3>О компании</h3>
+        <hr/>
+
+        {% include 'common/elements/form_field.html' with item=form.employer_name %}
+        {% include 'common/elements/form_field.html' with item=form.employer_description %}
+        {% include 'common/elements/form_field.html' with item=form.employer_website %}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-group">Отправить</button>
+            <a class="btn btn-danger" href="{% url 'catalog_delete' item.id item.secret_key %}">Удалить</a>
+        </div>
+
+    </form>
+{% endblock %}

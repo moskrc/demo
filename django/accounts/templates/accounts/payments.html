@@ -1,0 +1,40 @@
+{% extends "accounts/base.html" %}
+{% load staticfiles %}
+{% load static %}
+{% load plans_tags %}
+{% block title %}Profile{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+
+{% endblock %}
+
+{% block profile_content %}
+    <h1>Payments</h1>
+
+    <ul class="features-tabs nav text-center" role="tablist">
+        <li class="nav-item" role="presentation"><a class="nav-link" href="{% url 'profile' %}">Main Info</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link active" href="{% url 'profile_payments' %}">Payments</a></li>
+    </ul>
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Comment</th>
+            <th>Is Paid</th>
+        </thead>
+        <tbody>
+        {% for i in invoices %}
+            <tr>
+                <td>{{ i.date|date_from_unixstamp }}</td>
+                <td>${{ i.amount_due|cents_to_dollars }}</td>
+                <td>{{ i|get_comment_for_invoice }}</td>
+                <td>{{ i.paid|yesno }}</td>
+            </tr>
+        {% empty %}
+            <p>You don't have any invoices yet</p>
+        {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+
+<h1>Новый отклик</h1>
+
+
+<p>
+Вакансия: {{application.item.title}}<br/>
+Полное описание: <a href="http://{{ site.domain }}{% url 'catalog_view' application.item.pk %}">Ссылка для просмотра вакансии</a><br/>
+Кандидат: {{application.name}}<br/>
+Email: {{application.email}}<br/>
+Отклик: {{application.about|linebreaks}}<br/>
+</p>
+
+</body>
+</html>

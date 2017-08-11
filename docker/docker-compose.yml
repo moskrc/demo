@@ -1,0 +1,210 @@
+version: '2'
+
+volumes:
+  media:
+
+services:
+  proxy:
+    restart: always
+    container_name: s-ng01
+    depends_on:
+      [web]
+    build: ./nginx/
+    ports:
+      - "80:80"
+    volumes:
+      - ./web/static_override:/www/static
+      - media:/www/media
+    links:
+      - web:web
+    environment:
+      - VIRTUAL_HOST=sapsan-info.ru
+      - VIRTUAL_PORT=80
+      - LETSENCRYPT_HOST=sapsan-info.ru
+      - LETSENCRYPT_EMAIL=admin@sapsan-info.ru
+    network_mode: "bridge"
+
+
+  db:
+    hostname: db
+    container_name: s-db01
+    image: postgres:latest
+    expose:
+      - "5432"
+    volumes:
+      - ./database:/var/lib/postgresql/data/
+    network_mode: "bridge"
+
+
+  redis:
+    hostname: redis
+    container_name: s-rd01
+    image: redis:latest
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - ./redis_data:/data
+    network_mode: "bridge"
+
+
+  web:
+    restart: on-failure
+    hostname: web
+    container_name: s-web01
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+    depends_on:
+      - redis
+      - db
+      - rqworker0
+      - rqscheduler
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_web.sh
+    ports:
+      - "6900:6900"
+      - "8000:8000"
+    network_mode: "bridge"
+
+
+  rqworker0:
+    restart: always
+    container_name: s-rqw00
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+      - proxybroker:proxybroker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_rq.sh
+    network_mode: "bridge"
+
+  rqworker1:
+    restart: always
+    container_name: s-rqw01
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+      - proxybroker:proxybroker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_rq.sh
+    network_mode: "bridge"
+
+
+  rqworker2:
+    restart: always
+    container_name: s-rqw02
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+      - proxybroker:proxybroker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_rq.sh
+    network_mode: "bridge"
+
+
+  rqworker3:
+    restart: always
+    container_name: s-rqw03
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+      - proxybroker:proxybroker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_rq.sh
+    network_mode: "bridge"
+
+
+  rqworker4:
+    restart: always
+    container_name: s-rqw04
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+      - proxybroker:proxybroker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_rq.sh
+    network_mode: "bridge"
+
+  rqworker5:
+    restart: always
+    container_name: s-rqw05
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+      - proxybroker:proxybroker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - media:/usr/src/media
+      - ./web:/usr/src/app
+    env_file: .env_dev
+    command: ./run_rq.sh
+    network_mode: "bridge"
+
+  proxybroker:
+    restart: always
+    container_name: s-pbr01
+    build: ./proxybroker
+    env_file: .env_dev
+    command: ./run_proxybroker.sh
+    network_mode: "bridge"
+    expose:
+      - "8888"
+
+
+  rqscheduler:
+    restart: always
+    hostname: rqscheduler
+    container_name: s-rqsch01
+    build: ./web
+    links:
+      - db:db
+      - redis:redis
+    depends_on:
+      - redis
+      - db
+    env_file: .env_dev
+    command: ./run_rqscheduler.sh
+    network_mode: "bridge"

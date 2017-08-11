@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load plans_tags %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+
+{% block extra_meta %}{{ block.super }}
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center-title">
+                <br/>
+                <h2>Easy plans. Cancel anytime.</h2>
+                <p>All Plans Include a 14 day free trail</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        {% render_data_plans %}
+    </div>
+{% endblock %}
+
+

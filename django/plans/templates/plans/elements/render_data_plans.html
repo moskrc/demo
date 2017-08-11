@@ -1,0 +1,34 @@
+{% load static %}
+
+
+{% for item in plans %}
+    <div class="col-md-4 margin-b-30">
+        <div class="price-box {% if item.is_recommend %}best-plan{% endif %}">
+            <div class="price-header">
+
+                <h1><span class="dolor">$</span>{{ item.price }} <span class="peroid">/Month</span></h1>
+                <h4>{{ item.title|capfirst }}</h4>
+            </div>
+            <ul class="list-unstyled price-features">
+                {% for feature in item.highlights %}
+                    <li>{{ feature|capfirst }}</li>
+                {% endfor %}
+            </ul>
+            <div class="price-footer">
+                <form action="{% url 'payments:subscribe' item.id %}" method="get">
+
+                    {% if user.is_authenticated and user.data_plan %}
+                        {% if user.data_plan == item %}
+                            <p class="btn btn-rounded {% if item.is_recommend %}btn-white-border{% else %}btn-dark-border{% endif %}">My Current Plan</p>
+                        {% else %}
+                            <button class="btn btn-rounded {% if item.is_recommend %}btn-white-border{% else %}btn-dark-border{% endif %}" type="submit">Change to this Plan</button>
+                        {% endif %}
+                    {% else %}
+                        <button class="btn btn-rounded {% if item.is_recommend %}btn-white-border{% else %}btn-dark-border{% endif %}" type="submit">Subscribe</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
